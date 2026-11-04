@@ -41,21 +41,16 @@ export const AdminDashboard: React.FC = () => {
     loadData();
 
     // Subscribe to SSE real-time broadcast events
-    const unsubscribe = subscribeToRealtimeUpdates((type, payload) => {
-      if (type === 'NEW_REGISTRATION') {
-        setRegistrations(prev => [payload, ...prev.filter(r => r.id !== payload.id)]);
-      } else if (type === 'UPDATE_REGISTRATION') {
-        setRegistrations(prev => prev.map(r => r.id === payload.id ? payload : r));
-      } else if (type === 'DELETE_REGISTRATION') {
-        setRegistrations(prev => prev.filter(r => r.id !== payload.id));
-      }
-    });
+    // Vercel serverless instances are stateless; poll the shared database.
+    const unsubscribe = subscribeToRealtimeUpdates(() => undefined);
+    const refreshTimer = window.setInterval(() => { void loadData(); }, 15000);
 
     const adminListener = () => setCurrentAdminState(getCurrentAdmin());
     window.addEventListener('sgpi_admin_updated', adminListener);
 
     return () => {
       unsubscribe();
+      window.clearInterval(refreshTimer);
       window.removeEventListener('sgpi_admin_updated', adminListener);
     };
   }, []);

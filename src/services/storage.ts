@@ -92,15 +92,15 @@ export async function deleteRegistrationApi(id: string): Promise<void> {
 }
 
 export async function loginAdminApi(email: string, password: string): Promise<AdminUser> {
-  const res = await fetch('/api/auth/login', {
+  const res = await fetch('/api/admin-auth', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ action: 'login', email, password }),
   });
 
   const data = await res.json();
   if (!res.ok) {
-    throw new Error(data.error || 'লগইন ব্যর্থ হয়েছে।');
+    throw new Error(data.message || data.error || 'লগইন ব্যর্থ হয়েছে।');
   }
 
   setCurrentAdmin(data.admin);
@@ -116,7 +116,7 @@ export async function createAdminApi(email: string, name: string): Promise<Admin
 
   const data = await res.json();
   if (!res.ok) {
-    throw new Error(data.error || 'এডমিন তৈরি ব্যর্থ হয়েছে।');
+    throw new Error(data.message || data.error || 'এডমিন তৈরি ব্যর্থ হয়েছে।');
   }
   return data;
 }
@@ -141,25 +141,8 @@ export const setCurrentAdmin = (admin: AdminUser | null) => {
 };
 
 // SSE Real-time Subscription Hook
-export function subscribeToRealtimeUpdates(onEvent: (type: string, payload: any) => void) {
-  const eventSource = new EventSource('/api/events');
-
-  eventSource.onmessage = (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      if (data.type !== 'connected') {
-        onEvent(data.type, data.payload);
-      }
-    } catch (err) {
-      console.error('Error handling SSE message', err);
-    }
-  };
-
-  eventSource.onerror = (err) => {
-    console.warn('Real-time connection reconnecting...', err);
-  };
-
-  return () => {
-    eventSource.close();
-  };
+export function subscribeToRealtimeUpdates(_onEvent: (type: string, payload: any) => void) {
+  // Vercel serverless functions do not keep a shared in-memory SSE connection.
+  // AdminDashboard refreshes the database on a short polling interval instead.
+  return () => undefined;
 }
