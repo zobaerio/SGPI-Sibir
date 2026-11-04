@@ -1,6 +1,6 @@
 import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { ArrowDown, ArrowDownToLine, CalendarDays, Gift, MapPin, QrCode, Sparkles, Users } from 'lucide-react';
+import { ArrowDown, ArrowDownToLine, CalendarDays, MapPin, QrCode, Sparkles, Users } from 'lucide-react';
 
 export const EventPosterHero: React.FC = () => {
   const registrationUrl = typeof window !== 'undefined'
