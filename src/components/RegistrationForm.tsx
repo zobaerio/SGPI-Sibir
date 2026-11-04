@@ -16,7 +16,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
     mobile: '',
     email: '',
     department: 'Computer Science & Technology' as StudentRegistration['department'],
-    session: '২৬-২৭',
+    session: '২০২৫-২০২৬',
     semester: 'প্রথম সেমিস্টার',
     rollNumber: '',
     address: '',
@@ -119,7 +119,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div id="registration-form" className="max-w-4xl mx-auto px-4 py-8">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-green-100">
         {/* Form Header */}
         <div className="bg-gradient-to-r from-green-800 via-green-700 to-blue-900 text-white p-6 md:p-8 text-center relative">
@@ -130,7 +130,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
             নবীন বরণ ২০২৬ - রেজিস্ট্রেশন ফর্ম
           </h2>
           <p className="text-green-100 text-sm md:text-base max-w-2xl mx-auto">
-            সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট • ২৬-২৭ শিক্ষাবর্ষ • প্রথম সেমিস্টার
+            সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট • ২০২৫-২০২৬ শিক্ষাবর্ষ • প্রথম সেমিস্টার
           </p>
         </div>
 
