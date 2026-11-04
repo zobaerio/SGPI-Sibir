@@ -13,7 +13,7 @@
 হোমপেজের QR কোড runtime-এ বর্তমান origin থেকে `/#register` URL তৈরি করে। তাই deployed domain বদলালে QR code-ও স্বয়ংক্রিয়ভাবে নতুন domain ব্যবহার করবে। Registration pass-এর QR-এ শুধু Registration ID থাকে; শিক্ষার্থীর মোবাইল নম্বর QR payload-এ রাখা হয় না।
 
 ## বর্তমান বাস্তবায়নের সীমা — Production ব্যবহারের আগে পড়ুন
-- রেজিস্ট্রেশন ডেটা এখনো browser localStorage-এ রাখা হয়; এটি shared database নয় এবং অন্য ডিভাইস/ব্রাউজারে দেখা যাবে না।
+- রেজিস্ট্রেশন ডেটা browser localStorage-এ রাখা হবে—এই প্রকল্পে Supabase/remote database যোগ করা হবে না। এটি shared database নয়; একই browser ও device-এ তথ্য পাওয়া যাবে। Browser data clear করলে বা device বদলালে তথ্য হারাতে পারে।
 - Supabase database, server-side validation, RLS এবং secure admin roles এখনো configure করা হয়নি।
 - নিরাপত্তার কারণে client-side hardcoded admin password/login সরানো হয়েছে এবং backend authentication না হওয়া পর্যন্ত Admin Login বন্ধ রাখা হয়েছে।
 - কোনো বাস্তব শিক্ষার্থীর ব্যক্তিগত তথ্য সংগ্রহের আগে Supabase Auth + database + RLS + secure admin authorization সম্পন্ন করতে হবে।
