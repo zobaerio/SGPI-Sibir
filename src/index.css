@@ -6,19 +6,15 @@
     background-color: #f0fdf4;
     color: #1e293b;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Hind Siliguri', sans-serif;
   }
 }
 
 @keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 15px rgba(22, 163, 74, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(22, 163, 74, 0.8);
-  }
+  0%, 100% { box-shadow: 0 0 15px rgba(22, 163, 74, 0.4); }
+  50% { box-shadow: 0 0 30px rgba(22, 163, 74, 0.8); }
 }
 
 .animate-pulse-glow {
@@ -26,11 +22,42 @@
 }
 
 @media print {
-  body {
-    background: white !important;
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
   }
+
+  html, body, #root {
+    min-height: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .event-pass, .event-pass * {
+    visibility: visible !important;
+  }
+
+  .event-pass {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    break-inside: avoid !important;
+  }
+
   .no-print {
     display: none !important;
   }
 }
-
