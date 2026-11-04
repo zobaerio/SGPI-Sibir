@@ -28,40 +28,42 @@ export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration
         <div className="absolute top-0 right-0 h-24 w-64 bg-red-700 rounded-bl-full" />
         <div className="absolute bottom-0 left-0 h-24 w-64 bg-red-700 rounded-tr-full" />
         
-        <div className="relative z-10 flex h-full flex-col p-4">
-          {/* Header */}
-          <header className="flex items-center justify-between border-b-2 border-red-700 pb-2 mb-4">
-            <div className="flex items-center gap-2">
-              <img src="/assets/chhatrashibir_logo.jpg" alt="Logo" className="h-10 w-10 object-contain"/>
-              <School className="h-8 w-8 text-red-700"/>
-              <div className="text-left">
-                <p className="text-[10px] font-black text-red-900 uppercase">Sathkhira Govt Polytechnic</p>
-                <p className="text-xs font-black text-red-700">UNIVERSITY NAME</p>
+        <div className="relative z-10 flex h-full p-4">
+          <div className="flex flex-col justify-between w-full">
+            <header className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img src="/assets/chhatrashibir_logo.jpg" alt="Logo" className="h-12 w-12 object-contain"/>
+                <div>
+                  <h1 className="text-lg font-black text-red-800 uppercase">Sathkhira Govt Polytechnic</h1>
+                  <p className="text-xs font-bold text-red-600">নবীণ বরণ ২০২৬</p>
+                </div>
+              </div>
+              <div className="bg-red-700 text-white px-3 py-1 rounded font-black text-xs uppercase">Student ID Card</div>
+            </header>
+
+            <div className="flex items-center gap-6 mt-4">
+              <div className="h-28 w-28 shrink-0 overflow-hidden rounded-lg border-2 border-red-700 bg-gray-100 flex items-center justify-center">
+                {registration.photoUrl
+                  ? <img src={registration.photoUrl} alt={registration.fullName} className="h-full w-full object-cover"/>
+                  : <GraduationCap className="h-12 w-12 text-red-700"/>}
+              </div>
+              <div className="flex-1 space-y-0.5">
+                <h3 className="text-xl font-black text-gray-900 uppercase">{registration.fullName}</h3>
+                <div className="grid grid-cols-[auto,1fr] gap-x-2 text-xs font-bold text-gray-700 mt-2">
+                    <span className="text-red-700">ID:</span><span>{registration.id}</span>
+                    <span className="text-red-700">Date:</span><span>{new Date(registration.createdAt).toLocaleDateString()}</span>
+                    <span className="text-red-700">Address:</span><span>{registration.address}</span>
+                </div>
+              </div>
+              
+              <div className="shrink-0">
+                  <QRCodeSVG value={`SGPI-2026-REG:${registration.id}`} size={70} level="H"/>
               </div>
             </div>
-            <div className="bg-red-700 text-white px-4 py-1 rounded font-black text-sm tracking-wider">STUDENT ID CARD</div>
-          </header>
-
-          {/* Body */}
-          <div className="flex flex-1 items-center gap-6">
-            <div className="h-32 w-32 shrink-0 overflow-hidden rounded-full border-4 border-red-700 bg-red-50 flex items-center justify-center">
-              {registration.photoUrl
-                ? <img src={registration.photoUrl} alt={registration.fullName} className="h-full w-full object-cover"/>
-                : <GraduationCap className="h-16 w-16 text-red-700"/>}
-            </div>
-            <div className="flex-1 space-y-1">
-              <h3 className="text-2xl font-black text-red-800 uppercase">{registration.fullName}</h3>
-              <p className="text-sm font-bold text-gray-800"><span className="text-red-700 font-black">Student Id : </span> {registration.id}</p>
-              <p className="text-sm font-bold text-gray-800"><span className="text-red-700 font-black">Date : </span> {new Date(registration.createdAt).toLocaleDateString()}</p>
-              <p className="text-sm font-bold text-gray-800"><span className="text-red-700 font-black">Adress : </span> {registration.address}</p>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="mt-4 flex justify-end">
-            <div className="bg-white p-1 rounded-sm shadow-sm">
-                <QRCodeSVG value={`SGPI-2026-REG:${registration.id}`} size={80} level="H"/>
-            </div>
+            
+            <footer className="mt-2 text-center text-[10px] font-bold text-gray-500 border-t pt-1">
+                This is a computer generated pass for Nobin Boron 2026.
+            </footer>
           </div>
         </div>
       </article>
