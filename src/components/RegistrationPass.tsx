@@ -32,6 +32,7 @@ export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration
           {/* Header */}
           <header className="flex items-center justify-between border-b-2 border-red-700 pb-2 mb-4">
             <div className="flex items-center gap-2">
+              <img src="/assets/chhatrashibir_logo.jpg" alt="Logo" className="h-10 w-10 object-contain"/>
               <School className="h-8 w-8 text-red-700"/>
               <div className="text-left">
                 <p className="text-[10px] font-black text-red-900 uppercase">Sathkhira Govt Polytechnic</p>

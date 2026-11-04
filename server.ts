@@ -155,7 +155,7 @@ app.post('/api/registrations', (req, res) => {
       ...body,
       mobile: localNumber,
       id: `SGPI-2026-${nextIdNum}`,
-      session: body.session || '২০২৫-২০২৬',
+      session: body.session || '২০২৬-২০২৭',
       semester: 'প্রথম সেমিস্টার',
       createdAt: new Date().toISOString(),
       status: 'approved', // Auto-approve real registrations or keep 'pending'

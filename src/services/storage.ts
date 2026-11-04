@@ -73,7 +73,7 @@ export async function submitRegistration(
       ...newReg,
       mobile: localMobile,
       id: registrationId,
-      session: newReg.session || '২০২৫-২০২৬',
+      session: newReg.session || '২০২৬-২০২৭',
       semester: 'প্রথম সেমিস্টার',
       createdAt: new Date().toISOString(),
       status: 'approved',

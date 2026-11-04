@@ -16,7 +16,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
     mobile: '',
     email: '',
     department: 'Computer Science & Technology' as StudentRegistration['department'],
-    session: '২০২৫-২০২৬',
+    session: '২০২৬-২০২৭',
     semester: 'প্রথম সেমিস্টার',
     rollNumber: '',
     address: '',
