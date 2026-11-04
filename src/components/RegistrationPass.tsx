@@ -31,25 +31,25 @@ export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration
         <div className="relative z-10 flex h-full p-4">
           <div className="flex flex-col justify-between w-full">
             <header className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <img src="/assets/chhatrashibir_logo.jpg" alt="Logo" className="h-12 w-12 object-contain"/>
+              <div className="flex items-center gap-2">
+                <img src="/assets/chhatrashibir_logo.jpg" alt="Logo" className="h-8 w-8 object-contain"/>
                 <div>
-                  <h1 className="text-lg font-black text-red-800 uppercase">Sathkhira Govt Polytechnic</h1>
-                  <p className="text-xs font-bold text-red-600">নবীণ বরণ ২০২৬</p>
+                  <h1 className="text-[14px] font-black text-red-800 uppercase">Sathkhira Govt Polytechnic</h1>
+                  <p className="text-[9px] font-bold text-red-600">নবীণ বরণ ২০২৬</p>
                 </div>
               </div>
-              <div className="bg-red-700 text-white px-3 py-1 rounded font-black text-xs uppercase">Student ID Card</div>
+              <div className="bg-red-700 text-white px-2 py-0.5 rounded font-black text-[9px] uppercase">Student ID Card</div>
             </header>
 
-            <div className="flex items-center gap-6 mt-4">
-              <div className="h-28 w-28 shrink-0 overflow-hidden rounded-lg border-2 border-red-700 bg-gray-100 flex items-center justify-center">
+            <div className="flex items-center gap-4 mt-2">
+              <div className="h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-red-700 bg-gray-100 flex items-center justify-center">
                 {registration.photoUrl
                   ? <img src={registration.photoUrl} alt={registration.fullName} className="h-full w-full object-cover"/>
-                  : <GraduationCap className="h-12 w-12 text-red-700"/>}
+                  : <GraduationCap className="h-10 w-10 text-red-700"/>}
               </div>
               <div className="flex-1 space-y-0.5">
-                <h3 className="text-xl font-black text-gray-900 uppercase">{registration.fullName}</h3>
-                <div className="grid grid-cols-[auto,1fr] gap-x-2 text-xs font-bold text-gray-700 mt-2">
+                <h3 className="text-lg font-black text-gray-900 uppercase">{registration.fullName}</h3>
+                <div className="grid grid-cols-[auto,1fr] gap-x-2 text-[10px] font-bold text-gray-700 mt-1">
                     <span className="text-red-700">ID:</span><span>{registration.id}</span>
                     <span className="text-red-700">Date:</span><span>{new Date(registration.createdAt).toLocaleDateString()}</span>
                     <span className="text-red-700">Address:</span><span>{registration.address}</span>
@@ -57,7 +57,7 @@ export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration
               </div>
               
               <div className="shrink-0">
-                  <QRCodeSVG value={`SGPI-2026-REG:${registration.id}`} size={70} level="H"/>
+                  <QRCodeSVG value={`SGPI-2026-REG:${registration.id}`} size={60} level="H"/>
               </div>
             </div>
             
