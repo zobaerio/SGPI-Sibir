@@ -87,7 +87,7 @@ export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration
           {/* QR Code */}
           <div className="bg-white p-3 rounded-xl border border-green-200 shadow-sm flex flex-col items-center shrink-0">
             <QRCodeSVG 
-              value={`SGPI-2026-REG:${registration.id}:${registration.mobile}`} 
+              value={`SGPI-2026-REG:${registration.id}`} 
               size={90}
               level="M"
               includeMargin={false}
