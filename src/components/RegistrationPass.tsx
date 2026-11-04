@@ -75,7 +75,7 @@ export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration
       </article>
 
       <div className="no-print mt-5 flex flex-wrap justify-center gap-3">
-        <button onClick={handlePrint} className="inline-flex items-center gap-2 rounded-xl bg-emerald-800 px-6 py-3 text-sm font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-900"><Printer className="h-4 w-4"/> ভিজিটিং কার্ড প্রিন্ট / PDF</button>
+        <button onClick={handlePrint} className="inline-flex items-center gap-2 rounded-xl bg-emerald-800 px-6 py-3 text-sm font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-900"><Printer className="h-4 w-4"/> শুধু কার্ড ডাউনলোড / PDF</button>
         {onClose && <button onClick={onClose} className="inline-flex items-center gap-2 rounded-xl bg-slate-100 px-6 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-200"><X className="h-4 w-4"/> বন্ধ করুন</button>}
       </div>
     </section>
