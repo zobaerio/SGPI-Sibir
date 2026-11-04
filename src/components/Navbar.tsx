@@ -36,7 +36,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
       <div className="bg-yellow-400 text-green-950 px-4 py-1 text-xs md:text-sm font-bold flex justify-between items-center shadow-inner">
         <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
           <span className="bg-green-900 text-yellow-300 px-2 py-0.5 rounded text-[11px] animate-pulse">জরুরি ঘোষণা</span>
-          <span className="animate-marquee">সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউটের ২৬-২৭ শিক্ষাবর্ষের প্রথম সেমিস্টারের নবীন বরণ ২০২৬ - ১২ নভেম্বর ২০২৬, বৃহস্পতিবার!</span>
+          <span className="animate-marquee">সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউটের ২০২৫-২০২৬ শিক্ষাবর্ষের প্রথম সেমিস্টারের নবীন বরণ ২০২৬ - ১২ নভেম্বর ২০২৬, বৃহস্পতিবার!</span>
         </div>
         <div className="hidden md:flex items-center gap-4 text-xs">
           <span>📅 ১২ নভেম্বর ২০২৬</span>
