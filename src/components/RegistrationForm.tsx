@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { addRegistration } from '../services/storage';
+import { createRegistration } from '../services/registrations';
 import { StudentRegistration } from '../types';
 import { RegistrationPass } from './RegistrationPass';
 import { User, Phone, Mail, BookOpen, Upload, CheckCircle, AlertCircle, Award, Send } from 'lucide-react';
@@ -50,7 +50,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
     return /^01[3-9]\d{8}$/.test(localNumber);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -82,7 +82,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
     setLoading(true);
 
     try {
-      const newReg = addRegistration({
+      const newReg = await createRegistration({
         ...formData,
         photoUrl: photoFile || undefined,
       });
@@ -107,7 +107,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
             অভিনন্দন! আপনার রেজিস্ট্রেশন সফল হয়েছে।
           </h2>
           <p className="text-emerald-700 max-w-lg mx-auto mb-6">
-            আপনার রেজিস্ট্রেশন তথ্য এই ব্রাউজারে সংরক্ষিত হয়েছে। নিচে আপনার ব্যক্তিগত প্রবেশপাস দেখতে পাচ্ছেন। একই ব্রাউজার ও ডিভাইস থেকে তথ্য দেখা যাবে।
+            আপনার রেজিস্ট্রেশন তথ্য কেন্দ্রীয় নিরাপদ ডেটাবেসে সংরক্ষিত হয়েছে। নিচে আপনার ডিজিটাল প্রবেশপাস দেওয়া হলো।
           </p>
         </div>
 
@@ -133,7 +133,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
           <p className="text-green-100 text-sm md:text-base max-w-2xl mx-auto">
             সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট • ২০২৫-২০২৬ শিক্ষাবর্ষ • প্রথম সেমিস্টার
           </p>
-          <p className="mt-2 text-xs font-semibold text-emerald-100">রেজিস্ট্রেশনের তথ্য এই ব্রাউজারেই সংরক্ষিত থাকবে।</p>
+          <p className="mt-2 text-xs font-semibold text-emerald-100">রেজিস্ট্রেশনের তথ্য নিরাপদ কেন্দ্রীয় ডেটাবেসে সংরক্ষিত হবে।</p>
         </div>
 
         {error && (

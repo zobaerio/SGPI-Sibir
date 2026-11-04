@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  getStoredRegistrations, 
-  updateRegistrationStatus, 
-  deleteRegistration, 
-  updateRegistration, 
-  getCurrentAdmin,
-  getStoredAdmins 
-} from '../services/storage';
+import { getCurrentAdmin } from '../services/storage';
+import { listRegistrations, updateRemoteRegistration, removeRemoteRegistration } from '../services/registrations';
 import { StudentRegistration } from '../types';
 import { RegistrationPass } from './RegistrationPass';
 import * as XLSX from 'xlsx';
@@ -23,19 +17,28 @@ export const AdminDashboard: React.FC = () => {
   const [selectedStudent, setSelectedStudent] = useState<StudentRegistration | null>(null);
   const [editingStudent, setEditingStudent] = useState<StudentRegistration | null>(null);
   const [currentAdmin, setCurrentAdminState] = useState(getCurrentAdmin());
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
-  const loadData = () => {
-    setRegistrations(getStoredRegistrations());
+  const loadData = async () => {
+    try {
+      const rows = await listRegistrations();
+      setRegistrations(rows);
+      setLoadError('');
+    } catch (error: any) {
+      setLoadError(error.message || 'ডেটাবেস থেকে তথ্য আনা যায়নি।');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    loadData();
-    const handleUpdate = () => loadData();
+    void loadData();
+    const timer = window.setInterval(() => void loadData(), 15000);
     const handleAdminUpdate = () => setCurrentAdminState(getCurrentAdmin());
-    window.addEventListener('sgpi_registrations_updated', handleUpdate);
     window.addEventListener('sgpi_admin_updated', handleAdminUpdate);
     return () => {
-      window.removeEventListener('sgpi_registrations_updated', handleUpdate);
+      window.clearInterval(timer);
       window.removeEventListener('sgpi_admin_updated', handleAdminUpdate);
     };
   }, []);
@@ -94,25 +97,26 @@ export const AdminDashboard: React.FC = () => {
     XLSX.writeFile(workbook, `Nobin_Boron_2026_Registrations_${Date.now()}.xlsx`);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('আপনি কি নিশ্চিতভাবে এই রেজিস্ট্রেশনটি মুছে ফেলতে চান?')) {
-      deleteRegistration(id);
-      loadData();
+      try { await removeRemoteRegistration(id); await loadData(); }
+      catch (error: any) { window.alert(error.message || 'মুছে ফেলা যায়নি।'); }
     }
   };
 
-  const handleStatusToggle = (id: string, currentStatus: StudentRegistration['status']) => {
+  const handleStatusToggle = async (id: string, currentStatus: StudentRegistration['status']) => {
+    const student = registrations.find(item => item.id === id);
+    if (!student) return;
     const nextStatus = currentStatus === 'approved' ? 'pending' : 'approved';
-    updateRegistrationStatus(id, nextStatus);
-    loadData();
+    try { await updateRemoteRegistration({ ...student, status: nextStatus }); await loadData(); }
+    catch (error: any) { window.alert(error.message || 'স্ট্যাটাস পরিবর্তন করা যায়নি।'); }
   };
 
-  const handleSaveEdit = (e: React.FormEvent) => {
+  const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editingStudent) {
-      updateRegistration(editingStudent);
-      setEditingStudent(null);
-      loadData();
+      try { await updateRemoteRegistration(editingStudent); setEditingStudent(null); await loadData(); }
+      catch (error: any) { window.alert(error.message || 'তথ্য সংরক্ষণ করা যায়নি।'); }
     }
   };
 
@@ -148,10 +152,11 @@ export const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      <div role="status" className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-950">
-        <div className="font-extrabold">গুরুত্বপূর্ণ: Browser-only Data Storage</div>
-        <p className="mt-1 leading-relaxed">এই সংস্করণে রেজিস্ট্রেশন তথ্য এই ডিভাইসের এই ব্রাউজারের Local Storage-এ থাকে। তাই অন্য শিক্ষার্থীর ফোনে করা রেজিস্ট্রেশন এখানে স্বয়ংক্রিয়ভাবে দেখা যাবে না। ব্রাউজারের ডেটা মুছে ফেললে রেজিস্ট্রেশনও হারাতে পারে। কেন্দ্রীয় ডেটাবেস ছাড়া সব শিক্ষার্থীর তথ্য এক জায়গায় সংগ্রহ করা সম্ভব নয়।</p>
+      <div role="status" className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-950">
+        <div className="font-extrabold">কেন্দ্রীয় Supabase Database সংযুক্ত</div>
+        <p className="mt-1 leading-relaxed">সব শিক্ষার্থীর রেজিস্ট্রেশন কেন্দ্রীয় ডেটাবেসে সংরক্ষিত হয়। নতুন তথ্য স্বয়ংক্রিয়ভাবে প্রতি ১৫ সেকেন্ডে রিফ্রেশ হবে।</p>
       </div>
+      {loadError && <div role="alert" className="mb-6 rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">{loadError}</div>}
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -243,6 +248,8 @@ export const AdminDashboard: React.FC = () => {
           </select>
         </div>
       </div>
+
+      {loading && <div className="mb-4 text-center text-sm text-gray-500">ডেটাবেস থেকে রেজিস্ট্রেশন লোড হচ্ছে…</div>}
 
       {/* Registrations Table */}
       <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-green-100">
