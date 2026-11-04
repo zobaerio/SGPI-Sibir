@@ -33,7 +33,7 @@
 .animate-marquee {
   display: inline-block;
   white-space: nowrap;
-  animation: marquee 22s linear infinite;
+  animation: marquee 38s linear infinite;
 }
 
 .animate-marquee:hover {
