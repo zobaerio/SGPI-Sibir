@@ -45,8 +45,9 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
   };
 
   const validateMobile = (mob: string) => {
-    const bdMobileRegex = /^01[3-9]\d{8}$/;
-    return bdMobileRegex.test(mob);
+    const digits = mob.replace(/\D/g, '');
+    const localNumber = digits.startsWith('880') ? `0${digits.slice(3)}` : digits;
+    return /^01[3-9]\d{8}$/.test(localNumber);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -211,7 +212,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
                   maxLength={14}
                   placeholder="01XXXXXXXXX"
                   value={formData.mobile}
-                  onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '') })}
+                  onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/[^\d+]/g, '') })}
                   className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-600 focus:bg-white outline-none transition font-medium"
                 />
               </div>
