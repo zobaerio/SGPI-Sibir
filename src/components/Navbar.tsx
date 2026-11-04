@@ -6,9 +6,10 @@ interface NavbarProps {
   activeTab: 'register' | 'poster' | 'status' | 'admin';
   setActiveTab: (tab: 'register' | 'poster' | 'status' | 'admin') => void;
   onOpenAdminLogin: () => void;
+  onLogout?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenAdminLogin }) => {
+export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenAdminLogin, onLogout }) => {
   const [currentAdmin, setAdminState] = useState(getCurrentAdmin());
   const [totalRegs, setTotalRegs] = useState(getStoredRegistrations().length);
 
@@ -26,8 +27,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
   }, []);
 
   const handleLogout = () => {
-    setCurrentAdmin(null);
-    setActiveTab('register');
+    if (onLogout) onLogout();
+    else { setCurrentAdmin(null); setActiveTab('register'); }
   };
 
   return (
@@ -114,14 +115,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
                   <LogOut className="w-4 h-4" />
                 </button>
               </div>
-            ) : (
-              <button
-                onClick={onOpenAdminLogin}
-                className="ml-4 px-4 py-2 rounded-xl text-sm font-semibold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition flex items-center gap-2"
-              >
-                <Shield className="w-4 h-4 text-yellow-300" /> এডমিন লগইন
-              </button>
-            )}
+            ) : null}
           </div>
 
           {/* Mobile hamburger or quick buttons */}
@@ -133,14 +127,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
               >
                 ড্যাশবোর্ড
               </button>
-            ) : (
-              <button
-                onClick={onOpenAdminLogin}
-                className="px-3 py-1.5 bg-white/20 text-white text-xs font-semibold rounded-lg flex items-center gap-1"
-              >
-                <Shield className="w-3.5 h-3.5" /> এডমিন
-              </button>
-            )}
+            ) : null}
           </div>
         </div>
 
