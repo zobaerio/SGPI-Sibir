@@ -1,6 +1,7 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { isAdminRequest, supabaseRequest, toStudent } from './_lib/supabase';
 
+type VercelRequest = { method?: string; headers: Record<string, string | string[] | undefined>; body?: any; query: Record<string, string | string[] | undefined> };
+type VercelResponse = { setHeader(name: string, value: string): void; status(code: number): VercelResponse; json(data: unknown): void };
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Cache-Control', 'no-store, max-age=0');
   if (!isAdminRequest(req)) return res.status(401).json({ message: 'অনুমোদিত এডমিন লগইন প্রয়োজন।' });
