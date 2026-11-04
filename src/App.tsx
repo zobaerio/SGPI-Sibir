@@ -6,6 +6,7 @@ import { EventPosterSection } from './components/EventPosterSection';
 import { CheckStatusModal } from './components/CheckStatusModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminLoginModal } from './components/AdminLoginModal';
+import { FooterAdminAccess } from './components/FooterAdminAccess';
 import { getCurrentAdmin, setCurrentAdmin } from './services/storage';
 import { Award, MapPin, Calendar, Loader2 } from 'lucide-react';
 
@@ -122,9 +123,7 @@ export default function App() {
             </div>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 text-center border-t border-white/10 pt-6 text-xs text-green-300">
-          <p>© ২০২৬ নবীন বরণ কমিটি, সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট। সর্বস্বত্ব সংরক্ষিত।</p>
-        </div>
+        <FooterAdminAccess onOpenAdmin={() => { window.history.pushState({}, '', '/admin'); setShowAdminLogin(true); }} />
       </footer>
 
       {showAdminLogin && (
