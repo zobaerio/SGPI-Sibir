@@ -105,14 +105,19 @@ export async function submitRegistration(
       throw err;
     }
     console.error('Error submitting registration to Firestore:', err);
-    // If client offline or Firestore permission issue, try server route
+    // If client offline or Firestore issue, try server route
     try {
       const res = await fetch('/api/registrations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newReg),
       });
-      if (res.ok) return await res.json();
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.id) {
+          return data;
+        }
+      }
     } catch {}
     handleFirestoreError(err, OperationType.CREATE, REGISTRATIONS_COLLECTION);
   }
@@ -304,6 +309,11 @@ export function subscribeToRealtimeUpdates(onEvent: (type: string, payload: any)
       },
       (error) => {
         console.warn('Firestore real-time subscription error:', error);
+        try {
+          handleFirestoreError(error, OperationType.GET, REGISTRATIONS_COLLECTION);
+        } catch (e) {
+          console.error(e);
+        }
       }
     );
 

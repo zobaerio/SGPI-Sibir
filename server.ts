@@ -254,9 +254,7 @@ app.all('/api/admin-auth', (req, res) => {
   const method = req.method;
 
   if (method === 'GET' || action === 'session') {
-    // In a real app, we'd check a session cookie here. 
-    // For now, we return 401 to force a fresh login if there's no state.
-    return res.status(401).json({ ok: false, error: 'সেশন শেষ হয়েছে।' });
+    return res.status(200).json({ ok: false, error: 'কোনো সক্রিয় সেশন নেই।' });
   }
 
   if (method === 'POST' && (action === 'login' || !action)) {
