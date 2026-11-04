@@ -1,6 +1,6 @@
 type VercelRequest = { method?: string; headers: Record<string, string | string[] | undefined>; body?: any };
 type VercelResponse = { setHeader(name: string, value: string): void; status(code: number): VercelResponse; json(data: unknown): void };
-import { createHmac, scryptSync, timingSafeEqual } from 'node:crypto';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 
 const COOKIE = 'sgpi_admin_session';
 const TTL = 8 * 60 * 60;
@@ -27,7 +27,8 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ ok: false });
   const secret = process.env.ADMIN_SESSION_SECRET;
   const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-  if (!secret || !adminEmail || !process.env.ADMIN_PASSWORD_HASH) return res.status(503).json({ ok: false, message: 'Admin security setup is incomplete.' });
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!secret || !adminEmail || !adminPassword) return res.status(503).json({ ok: false, message: 'Admin email/password সেট করা হয়নি।' });
 
   const token = String(req.headers.cookie || '').split(';').map(x => x.trim()).find(x => x.startsWith(COOKIE + '='))?.slice(COOKIE.length + 1) || '';
   const session = token ? verify(token, secret) : null;
@@ -50,12 +51,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
   const email = String(req.body?.email || '').trim().toLowerCase();
   const password = String(req.body?.password || '');
-  const parts = (process.env.ADMIN_PASSWORD_HASH || '').split('$');
-  let valid = false;
-  if (parts.length === 3 && parts[0] === 'scrypt' && parts[1] && parts[2]) {
-    try { valid = equal(scryptSync(password, parts[1], 64).toString('hex'), parts[2]); } catch { valid = false; }
-  }
-  if (email !== adminEmail || !valid) return res.status(401).json({ ok: false, message: 'ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।' });
+  if (email !== adminEmail || !equal(password, adminPassword)) return res.status(401).json({ ok: false, message: 'ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।' });
 
   attempts.delete(ip);
   const expires = Math.floor(Date.now() / 1000) + TTL;
