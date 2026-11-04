@@ -54,7 +54,7 @@ export const EventPosterSection: React.FC<EventPosterSectionProps> = ({ onGotoRe
           <div className="flex justify-center">
             <div className="bg-white p-3 rounded-2xl shadow-2xl border-4 border-yellow-400 max-w-sm w-full transform hover:scale-[1.02] transition duration-300">
               <img 
-                src="/assets/aistudio/file_00000000b8f0820a8d02720982d70be1_bc539012.png" 
+                src="/event-poster.svg" 
                 alt="নবীন বরণ ২০২৬ অফিশিয়াল পোস্টার" 
                 className="w-full h-auto rounded-lg object-contain max-h-[500px]"
               />
