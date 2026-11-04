@@ -1,5 +1,7 @@
 import { StudentRegistration, AdminUser } from '../types';
 
+let activeAdmin: AdminUser | null = null;
+
 const STORAGE_KEYS = {
   REGISTRATIONS: 'sgpi_nobin_boron_2026_registrations',
   ADMINS: 'sgpi_nobin_boron_2026_admins',
@@ -86,17 +88,9 @@ export const addAdminUser = (admin: AdminUser) => {
   localStorage.setItem(STORAGE_KEYS.ADMINS, JSON.stringify(admins));
 };
 
-export const getCurrentAdmin = (): AdminUser | null => {
-  try {
-    const data = localStorage.getItem(STORAGE_KEYS.CURRENT_ADMIN);
-    return data ? JSON.parse(data) : null;
-  } catch {
-    return null;
-  }
-};
+export const getCurrentAdmin = (): AdminUser | null => activeAdmin;
 
 export const setCurrentAdmin = (admin: AdminUser | null) => {
-  if (admin) localStorage.setItem(STORAGE_KEYS.CURRENT_ADMIN, JSON.stringify(admin));
-  else localStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN);
+  activeAdmin = admin;
   window.dispatchEvent(new Event('sgpi_admin_updated'));
 };
