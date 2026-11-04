@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { RegistrationForm } from './components/RegistrationForm';
 import { EventPosterHero } from './components/EventPosterHero';
@@ -7,20 +7,56 @@ import { CheckStatusModal } from './components/CheckStatusModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminLoginModal } from './components/AdminLoginModal';
 import { getCurrentAdmin } from './services/storage';
-import { Award, MapPin, Calendar } from 'lucide-react';
+import { Award, MapPin, Calendar, Loader2 } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'register' | 'poster' | 'status' | 'admin'>('register');
   const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
 
-  const handleLoginSuccess = () => setActiveTab('admin');
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch('/api/admin-auth', { credentials: 'same-origin', cache: 'no-store' });
+        if (response.ok) {
+          const result = await response.json();
+          if (result.ok && result.admin) {
+            setCurrentAdmin({ ...result.admin, createdAt: new Date().toISOString() });
+            if (window.location.pathname === '/admin') setActiveTab('admin');
+          } else setCurrentAdmin(null);
+        } else setCurrentAdmin(null);
+      } catch { setCurrentAdmin(null); }
+      finally {
+        setCheckingSession(false);
+        if (window.location.pathname === '/admin' && !getCurrentAdmin()) setShowAdminLogin(true);
+      }
+    };
+    checkSession();
+  }, []);
+
+  const handleLoginSuccess = () => {
+    setCurrentAdmin({ email: 'zobaerhasan431@gmail.com', name: 'Super Admin', role: 'super_admin', createdAt: new Date().toISOString() });
+    setShowAdminLogin(false);
+    setActiveTab('admin');
+    window.history.replaceState({}, '', '/admin');
+  };
+
+  const handleLogout = async () => {
+    try { await fetch('/api/admin-auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ action: 'logout' }) }); } catch {}
+    setCurrentAdmin(null);
+    setActiveTab('register');
+    window.history.replaceState({}, '', '/');
+  };
+
+  if (checkingSession) return <div className="flex min-h-screen items-center justify-center bg-emerald-50"><Loader2 className="h-8 w-8 animate-spin text-emerald-800" /><span className="ml-3 text-sm font-semibold text-emerald-900">নিরাপদ সেশন যাচাই হচ্ছে…</span></div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 via-emerald-50/30 to-blue-50/20 flex flex-col font-sans text-gray-900">
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenAdminLogin={() => setShowAdminLogin(true)}
+        onOpenAdminLogin={() => { window.history.pushState({}, '', '/admin'); setShowAdminLogin(true); }}
+        onLogout={handleLogout}
       />
 
       <main className="flex-grow">
@@ -92,7 +128,7 @@ export default function App() {
       </footer>
 
       {showAdminLogin && (
-        <AdminLoginModal onClose={() => setShowAdminLogin(false)} onLoginSuccess={handleLoginSuccess} />
+        <AdminLoginModal onClose={() => { setShowAdminLogin(false); if (!getCurrentAdmin()) window.history.replaceState({}, '', '/'); }} onLoginSuccess={handleLoginSuccess} />
       )}
     </div>
   );
