@@ -6,7 +6,7 @@ import { EventPosterSection } from './components/EventPosterSection';
 import { CheckStatusModal } from './components/CheckStatusModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminLoginModal } from './components/AdminLoginModal';
-import { getCurrentAdmin } from './services/storage';
+import { getCurrentAdmin, setCurrentAdmin } from './services/storage';
 import { Award, MapPin, Calendar, Loader2 } from 'lucide-react';
 
 export default function App() {
