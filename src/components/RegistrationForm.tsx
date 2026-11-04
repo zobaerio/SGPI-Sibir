@@ -87,6 +87,10 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
         photoUrl: photoFile || undefined,
       });
 
+      if (!newReg || !newReg.id) {
+        throw new Error('সার্ভার থেকে সফলভাবে আইডি পাওয়া যায়নি। অনুগ্রহ করে ড্যাশবোর্ডে চেক করুন।');
+      }
+
       setCompletedRegistration(newReg);
       onRegistrationSuccess(newReg);
     } catch (err: any) {

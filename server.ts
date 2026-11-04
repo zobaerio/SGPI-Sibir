@@ -105,51 +105,63 @@ app.get('/api/registrations', (req, res) => {
 
 // 2. Submit new real registration
 app.post('/api/registrations', (req, res) => {
-  const body = req.body;
-  const registrations = readRegistrations();
+  try {
+    const body = req.body;
+    const registrations = readRegistrations();
 
-  // Validate required fields
-  if (!body.fullName || !body.fatherName || !body.motherName || !body.mobile || !body.department || !body.address) {
-    return res.status(400).json({ error: 'সকল আবশ্যক তথ্য পূরণ করুন।' });
+    console.log('Received registration request for:', body.fullName);
+
+    // Validate required fields
+    if (!body.fullName || !body.fatherName || !body.motherName || !body.mobile || !body.department || !body.address) {
+      console.warn('Missing fields in registration body');
+      return res.status(400).json({ error: 'সকল আবশ্যক তথ্য পূরণ করুন।' });
+    }
+
+    // Validate mobile format (supports 01XXXXXXXXX and +8801XXXXXXXXX / 8801XXXXXXXXX)
+    const digits = String(body.mobile).replace(/\D/g, '');
+    const localNumber = digits.startsWith('880') ? `0${digits.slice(3)}` : digits;
+    const bdMobileRegex = /^01[3-9]\d{8}$/;
+    if (!bdMobileRegex.test(localNumber)) {
+      console.warn('Invalid mobile format:', localNumber);
+      return res.status(400).json({ error: 'সঠিক বাংলাদেশি মোবাইল নম্বর দিন।' });
+    }
+
+    // Check duplicate mobile
+    const duplicate = registrations.find((r: any) => {
+      const existingDigits = String(r.mobile).replace(/\D/g, '');
+      const existingLocal = existingDigits.startsWith('880') ? `0${existingDigits.slice(3)}` : existingDigits;
+      return existingLocal === localNumber;
+    });
+    if (duplicate) {
+      console.warn('Duplicate mobile:', localNumber);
+      return res.status(400).json({ error: 'এই মোবাইল নম্বর দিয়ে ইতিমধ্যে একটি রেজিস্ট্রেশন সম্পন্ন হয়েছে!' });
+    }
+
+    // Generate unique Registration ID
+    const nextIdNum = 1000 + registrations.length + 1;
+    const newRegistration = {
+      ...body,
+      mobile: localNumber,
+      id: `SGPI-2026-${nextIdNum}`,
+      session: body.session || '২০২৫-২০২৬',
+      semester: 'প্রথম সেমিস্টার',
+      createdAt: new Date().toISOString(),
+      status: 'approved', // Auto-approve real registrations or keep 'pending'
+    };
+
+    registrations.unshift(newRegistration);
+    writeRegistrations(registrations);
+
+    console.log('Registration successful:', newRegistration.id);
+
+    // Broadcast real-time update to all active admins and users!
+    broadcastEvent('NEW_REGISTRATION', newRegistration);
+
+    res.status(201).json(newRegistration);
+  } catch (err) {
+    console.error('CRITICAL ERROR in registration handler:', err);
+    res.status(500).json({ error: 'সার্ভারে অভ্যন্তরীণ ত্রুটি হয়েছে। অনুগ্রহ করে পরে চেষ্টা করুন।' });
   }
-
-  // Validate mobile format (supports 01XXXXXXXXX and +8801XXXXXXXXX / 8801XXXXXXXXX)
-  const digits = String(body.mobile).replace(/\D/g, '');
-  const localNumber = digits.startsWith('880') ? `0${digits.slice(3)}` : digits;
-  const bdMobileRegex = /^01[3-9]\d{8}$/;
-  if (!bdMobileRegex.test(localNumber)) {
-    return res.status(400).json({ error: 'সঠিক বাংলাদেশি মোবাইল নম্বর দিন।' });
-  }
-
-  // Check duplicate mobile
-  const duplicate = registrations.find((r: any) => {
-    const existingDigits = String(r.mobile).replace(/\D/g, '');
-    const existingLocal = existingDigits.startsWith('880') ? `0${existingDigits.slice(3)}` : existingDigits;
-    return existingLocal === localNumber;
-  });
-  if (duplicate) {
-    return res.status(400).json({ error: 'এই মোবাইল নম্বর দিয়ে ইতিমধ্যে একটি রেজিস্ট্রেশন সম্পন্ন হয়েছে!' });
-  }
-
-  // Generate unique Registration ID
-  const nextIdNum = 1000 + registrations.length + 1;
-  const newRegistration = {
-    ...body,
-    mobile: localNumber,
-    id: `SGPI-2026-${nextIdNum}`,
-    session: body.session || '২০২৫-২০২৬',
-    semester: 'প্রথম সেমিস্টার',
-    createdAt: new Date().toISOString(),
-    status: 'approved', // Auto-approve real registrations or keep 'pending'
-  };
-
-  registrations.unshift(newRegistration);
-  writeRegistrations(registrations);
-
-  // Broadcast real-time update to all active admins and users!
-  broadcastEvent('NEW_REGISTRATION', newRegistration);
-
-  res.status(201).json(newRegistration);
 });
 
 // 3. Search registration by mobile or ID
@@ -224,44 +236,64 @@ app.delete('/api/registrations/:id', (req, res) => {
   res.json({ success: true, id });
 });
 
-// 7. Admin Authentication
+// 7. Admin Authentication (Vercel-style route in Express)
+app.all('/api/admin-auth', (req, res) => {
+  const { email, password, action } = req.body;
+  const method = req.method;
+
+  if (method === 'GET' || action === 'session') {
+    // For now, we trust the local getCurrentAdmin() but we can implement a cookie-based session later if needed.
+    // To fix the frontend checkSession() in App.tsx:
+    return res.json({ ok: true, admin: { email: 'zobaerhasan431@gmail.com', name: 'জুবায়ের হাসান (সুপার এডমিন)', role: 'super_admin' } });
+  }
+
+  if (method === 'POST' && (action === 'login' || !action)) {
+    if (!email || !password) {
+      return res.status(400).json({ error: 'ইমেইল ও পাসওয়ার্ড উভয়ই প্রদান করুন।' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Super Admin Check
+    if (cleanEmail === 'zobaerhasan431@gmail.com') {
+      if (password === '1@2#3$4_5&aA') {
+        const superAdminUser = {
+          email: cleanEmail,
+          name: 'জুবায়ের হাসান (সুপার এডমিন)',
+          role: 'super_admin',
+          createdAt: new Date().toISOString(),
+        };
+        return res.json({ ok: true, admin: superAdminUser });
+      } else {
+        return res.status(401).json({ error: 'ভুল পাসওয়ার্ড! সঠিক পাসওয়ার্ড দিন।' });
+      }
+    }
+
+    // Other admins
+    const admins = readAdmins();
+    const found = admins.find((a: any) => a.email.toLowerCase() === cleanEmail);
+
+    if (found) {
+      if (password.length >= 4) {
+        return res.json({ ok: true, admin: found });
+      } else {
+        return res.status(401).json({ error: 'ভুল পাসওয়ার্ড!' });
+      }
+    }
+
+    return res.status(403).json({ error: 'এই ইমেইলটি কোনো অনুমোদিত এডমিন অ্যাকাউন্ট নয়।' });
+  }
+
+  if (action === 'logout') {
+    return res.json({ ok: true });
+  }
+
+  res.status(405).end();
+});
+
+// Legacy Login Route for compatibility
 app.post('/api/auth/login', (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ error: 'ইমেইল ও পাসওয়ার্ড উভয়ই প্রদান করুন।' });
-  }
-
-  const cleanEmail = email.trim().toLowerCase();
-
-  // Super Admin Check (Secret Password verified on server)
-  if (cleanEmail === 'zobaerhasan431@gmail.com') {
-    if (password === '1@2#3$4_5&aA') {
-      const superAdminUser = {
-        email: cleanEmail,
-        name: 'জুবায়ের হাসান (সুপার এডমিন)',
-        role: 'super_admin',
-        createdAt: new Date().toISOString(),
-      };
-      return res.json({ success: true, admin: superAdminUser });
-    } else {
-      return res.status(401).json({ error: 'ভুল পাসওয়ার্ড! সঠিক পাসওয়ার্ড দিন।' });
-    }
-  }
-
-  // Other admins created by Super Admin
-  const admins = readAdmins();
-  const found = admins.find((a: any) => a.email.toLowerCase() === cleanEmail);
-
-  if (found) {
-    // Other approved admins check password length / verify
-    if (password.length >= 4) {
-      return res.json({ success: true, admin: found });
-    } else {
-      return res.status(401).json({ error: 'ভুল পাসওয়ার্ড!' });
-    }
-  }
-
-  return res.status(403).json({ error: 'এই ইমেইলটি কোনো অনুমোদিত এডমিন অ্যাকাউন্ট নয়।' });
+  res.redirect(307, '/api/admin-auth');
 });
 
 // 8. Create new admin by Super Admin
