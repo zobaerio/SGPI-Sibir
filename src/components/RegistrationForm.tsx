@@ -66,7 +66,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
       return;
     }
     if (!validateMobile(formData.mobile)) {
-      setError('সঠিক ১১ ডিজিটের বাংলাদেশি মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX)।');
+      setError('সঠিক বাংলাদেশি মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX অথবা +88017XXXXXXXX)।');
       return;
     }
     if (!formData.department) {
@@ -208,14 +208,14 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
                 <input
                   type="tel"
                   required
-                  maxLength={11}
+                  maxLength={14}
                   placeholder="01XXXXXXXXX"
                   value={formData.mobile}
                   onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '') })}
                   className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-600 focus:bg-white outline-none transition font-medium"
                 />
               </div>
-              <p className="text-[11px] text-gray-500 mt-1">১১ ডিজিটের সঠিক মোবাইল নম্বর দিন (এটাই আপনার পাস আইডি)</p>
+              <p className="text-[11px] text-gray-500 mt-1">বাংলাদেশি মোবাইল নম্বর দিন (এটাই আপনার পাস আইডি)</p>
             </div>
 
             {/* 5. Email (Optional) */}
