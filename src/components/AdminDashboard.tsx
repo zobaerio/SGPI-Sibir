@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { getCurrentAdmin } from '../services/storage';
-import { listRegistrations, updateRemoteRegistration, removeRemoteRegistration } from '../services/registrations';
+import { 
+  fetchRegistrations,
+  updateRegistrationStatusApi, 
+  deleteRegistrationApi, 
+  updateRegistrationApi, 
+  getCurrentAdmin,
+  subscribeToRealtimeUpdates
+} from '../services/storage';
 import { StudentRegistration } from '../types';
 import { RegistrationPass } from './RegistrationPass';
 import * as XLSX from 'xlsx';
@@ -11,35 +17,46 @@ import {
 
 export const AdminDashboard: React.FC = () => {
   const [registrations, setRegistrations] = useState<StudentRegistration[]>([]);
+  const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [deptFilter, setDeptFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedStudent, setSelectedStudent] = useState<StudentRegistration | null>(null);
   const [editingStudent, setEditingStudent] = useState<StudentRegistration | null>(null);
   const [currentAdmin, setCurrentAdminState] = useState(getCurrentAdmin());
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState('');
 
   const loadData = async () => {
+    setLoading(true);
     try {
-      const rows = await listRegistrations();
-      setRegistrations(rows);
-      setLoadError('');
-    } catch (error: any) {
-      setLoadError(error.message || 'ডেটাবেস থেকে তথ্য আনা যায়নি।');
+      const data = await fetchRegistrations();
+      setRegistrations(data);
+    } catch (e) {
+      console.error(e);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    void loadData();
-    const timer = window.setInterval(() => void loadData(), 15000);
-    const handleAdminUpdate = () => setCurrentAdminState(getCurrentAdmin());
-    window.addEventListener('sgpi_admin_updated', handleAdminUpdate);
+    loadData();
+
+    // Subscribe to SSE real-time broadcast events
+    const unsubscribe = subscribeToRealtimeUpdates((type, payload) => {
+      if (type === 'NEW_REGISTRATION') {
+        setRegistrations(prev => [payload, ...prev.filter(r => r.id !== payload.id)]);
+      } else if (type === 'UPDATE_REGISTRATION') {
+        setRegistrations(prev => prev.map(r => r.id === payload.id ? payload : r));
+      } else if (type === 'DELETE_REGISTRATION') {
+        setRegistrations(prev => prev.filter(r => r.id !== payload.id));
+      }
+    });
+
+    const adminListener = () => setCurrentAdminState(getCurrentAdmin());
+    window.addEventListener('sgpi_admin_updated', adminListener);
+
     return () => {
-      window.clearInterval(timer);
-      window.removeEventListener('sgpi_admin_updated', handleAdminUpdate);
+      unsubscribe();
+      window.removeEventListener('sgpi_admin_updated', adminListener);
     };
   }, []);
 
@@ -99,24 +116,35 @@ export const AdminDashboard: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (window.confirm('আপনি কি নিশ্চিতভাবে এই রেজিস্ট্রেশনটি মুছে ফেলতে চান?')) {
-      try { await removeRemoteRegistration(id); await loadData(); }
-      catch (error: any) { window.alert(error.message || 'মুছে ফেলা যায়নি।'); }
+      try {
+        await deleteRegistrationApi(id);
+        loadData();
+      } catch (err: any) {
+        alert(err.message || 'ডিলিট করতে সমস্যা হয়েছে।');
+      }
     }
   };
 
   const handleStatusToggle = async (id: string, currentStatus: StudentRegistration['status']) => {
-    const student = registrations.find(item => item.id === id);
-    if (!student) return;
     const nextStatus = currentStatus === 'approved' ? 'pending' : 'approved';
-    try { await updateRemoteRegistration({ ...student, status: nextStatus }); await loadData(); }
-    catch (error: any) { window.alert(error.message || 'স্ট্যাটাস পরিবর্তন করা যায়নি।'); }
+    try {
+      await updateRegistrationStatusApi(id, nextStatus);
+      loadData();
+    } catch (err: any) {
+      alert(err.message || 'স্ট্যাটাস পরিবর্তন ব্যর্থ হয়েছে।');
+    }
   };
 
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editingStudent) {
-      try { await updateRemoteRegistration(editingStudent); setEditingStudent(null); await loadData(); }
-      catch (error: any) { window.alert(error.message || 'তথ্য সংরক্ষণ করা যায়নি।'); }
+      try {
+        await updateRegistrationApi(editingStudent);
+        setEditingStudent(null);
+        loadData();
+      } catch (err: any) {
+        alert(err.message || 'তথ্য আপডেট ব্যর্থ হয়েছে।');
+      }
     }
   };
 
@@ -151,12 +179,6 @@ export const AdminDashboard: React.FC = () => {
           </button>
         </div>
       </div>
-
-      <div role="status" className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-950">
-        <div className="font-extrabold">কেন্দ্রীয় Supabase Database সংযুক্ত</div>
-        <p className="mt-1 leading-relaxed">সব শিক্ষার্থীর রেজিস্ট্রেশন কেন্দ্রীয় ডেটাবেসে সংরক্ষিত হয়। নতুন তথ্য স্বয়ংক্রিয়ভাবে প্রতি ১৫ সেকেন্ডে রিফ্রেশ হবে।</p>
-      </div>
-      {loadError && <div role="alert" className="mb-6 rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">{loadError}</div>}
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -248,8 +270,6 @@ export const AdminDashboard: React.FC = () => {
           </select>
         </div>
       </div>
-
-      {loading && <div className="mb-4 text-center text-sm text-gray-500">ডেটাবেস থেকে রেজিস্ট্রেশন লোড হচ্ছে…</div>}
 
       {/* Registrations Table */}
       <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-green-100">

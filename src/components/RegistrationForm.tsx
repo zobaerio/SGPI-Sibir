@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createRegistration } from '../services/registrations';
+import { submitRegistration } from '../services/storage';
 import { StudentRegistration } from '../types';
 import { RegistrationPass } from './RegistrationPass';
 import { User, Phone, Mail, BookOpen, Upload, CheckCircle, AlertCircle, Award, Send } from 'lucide-react';
@@ -82,7 +82,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
     setLoading(true);
 
     try {
-      const newReg = await createRegistration({
+      const newReg = await submitRegistration({
         ...formData,
         photoUrl: photoFile || undefined,
       });
@@ -107,7 +107,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
             অভিনন্দন! আপনার রেজিস্ট্রেশন সফল হয়েছে।
           </h2>
           <p className="text-emerald-700 max-w-lg mx-auto mb-6">
-            আপনার রেজিস্ট্রেশন তথ্য কেন্দ্রীয় নিরাপদ ডেটাবেসে সংরক্ষিত হয়েছে। নিচে আপনার ডিজিটাল প্রবেশপাস দেওয়া হলো।
+            সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট নবীন বরণ ২০২৬ এর জন্য আপনার তথ্য সফলভাবে সংরক্ষিত হয়েছে। নিচে আপনার অফিসিয়াল পাস দেখতে পাচ্ছেন।
           </p>
         </div>
 
@@ -122,18 +122,17 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
   return (
     <div id="registration-form" className="max-w-4xl mx-auto px-4 py-8">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-green-100">
-        {/* Form Header */}
-        <div className="bg-gradient-to-r from-green-800 via-green-700 to-blue-900 text-white p-6 md:p-8 text-center relative">
-          <div className="absolute top-3 right-3 bg-yellow-400 text-green-950 text-xs font-black px-3 py-1 rounded-full shadow">
-            রেজিস্ট্রেশন সম্পূর্ণ ফ্রি
+        {/* Form Header matching poster style */}
+        <div className="bg-gradient-to-r from-green-800 via-emerald-800 to-green-950 text-white p-6 md:p-8 text-center relative border-b-4 border-yellow-400">
+          <div className="inline-flex items-center gap-2 bg-green-700 border-2 border-white/60 text-white text-base md:text-lg font-black px-6 py-2 rounded-full shadow-lg mb-3">
+            <span>✍️</span> রেজিস্ট্রেশন ফর্ম
           </div>
-          <h2 className="text-2xl md:text-4xl font-extrabold text-yellow-300 mb-2">
-            নবীন বরণ ২০২৬ - রেজিস্ট্রেশন ফর্ম
+          <h2 className="text-2xl md:text-3xl font-extrabold text-yellow-300 drop-shadow">
+            সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট
           </h2>
-          <p className="text-green-100 text-sm md:text-base max-w-2xl mx-auto">
-            সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট • ২০২৫-২০২৬ শিক্ষাবর্ষ • প্রথম সেমিস্টার
+          <p className="text-green-100 text-xs md:text-sm font-semibold mt-1">
+            ২৫-২৬ সেশনের প্রথম সেমিস্টারের নবীন শিক্ষার্থীদের নিয়ে — নবীন বরণ ২০২৬
           </p>
-          <p className="mt-2 text-xs font-semibold text-emerald-100">রেজিস্ট্রেশনের তথ্য নিরাপদ কেন্দ্রীয় ডেটাবেসে সংরক্ষিত হবে।</p>
         </div>
 
         {error && (
@@ -346,17 +345,18 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
             />
           </div>
 
-          {/* Submit Button */}
+          {/* Submit Button matching poster's green pill style */}
           <div className="pt-4 text-center">
             <button
               type="submit"
               disabled={loading}
-              className="w-full md:w-auto px-10 py-4 bg-gradient-to-r from-green-700 to-green-900 hover:from-green-800 hover:to-green-950 text-white font-black text-lg rounded-2xl shadow-xl transition transform hover:-translate-y-0.5 flex items-center justify-center gap-3 mx-auto"
+              className="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-green-700 via-green-600 to-green-800 hover:from-green-800 hover:to-green-900 text-white font-black text-xl rounded-full shadow-2xl transition transform hover:-translate-y-0.5 flex items-center justify-center gap-3 mx-auto border-2 border-white/50"
             >
               <Send className="w-5 h-5 text-yellow-300" />
-              {loading ? 'প্রসেসিং হচ্ছে...' : 'রেজিস্ট্রেশন সম্পন্ন করুন'}
+              <span>{loading ? 'প্রসেসিং হচ্ছে...' : 'রেজিস্ট্রেশন করুন'}</span>
+              <span className="text-xl font-bold">›</span>
             </button>
-            <p className="text-xs text-gray-500 mt-3">
+            <p className="text-xs text-gray-500 mt-3 font-semibold">
               * রেজিস্ট্রেশন সফল হওয়ার পর আপনার ডিজিটাল পাস ও আইডি নম্বর স্ক্রিনে প্রদর্শিত হবে।
             </p>
           </div>

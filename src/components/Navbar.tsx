@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Award, Calendar, Shield, Users, FileText, QrCode, LogOut, UserCheck } from 'lucide-react';
-import { getCurrentAdmin, setCurrentAdmin, getStoredRegistrations } from '../services/storage';
+import { getCurrentAdmin, setCurrentAdmin, fetchRegistrations, subscribeToRealtimeUpdates } from '../services/storage';
 
 interface NavbarProps {
   activeTab: 'register' | 'poster' | 'status' | 'admin';
@@ -11,18 +11,34 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenAdminLogin, onLogout }) => {
   const [currentAdmin, setAdminState] = useState(getCurrentAdmin());
-  const [totalRegs, setTotalRegs] = useState(getStoredRegistrations().length);
+  const [totalRegs, setTotalRegs] = useState<number>(0);
+
+  const loadCount = async () => {
+    try {
+      const data = await fetchRegistrations();
+      setTotalRegs(data.length);
+    } catch (e) {
+      // ignore
+    }
+  };
 
   useEffect(() => {
-    const handleUpdate = () => {
+    loadCount();
+    const handleAdminUpdate = () => {
       setAdminState(getCurrentAdmin());
-      setTotalRegs(getStoredRegistrations().length);
     };
-    window.addEventListener('sgpi_admin_updated', handleUpdate);
-    window.addEventListener('sgpi_registrations_updated', handleUpdate);
+    window.addEventListener('sgpi_admin_updated', handleAdminUpdate);
+
+    // Subscribe to SSE updates for real-time header count
+    const unsubscribe = subscribeToRealtimeUpdates((type) => {
+      if (type === 'NEW_REGISTRATION' || type === 'DELETE_REGISTRATION') {
+        loadCount();
+      }
+    });
+
     return () => {
-      window.removeEventListener('sgpi_admin_updated', handleUpdate);
-      window.removeEventListener('sgpi_registrations_updated', handleUpdate);
+      window.removeEventListener('sgpi_admin_updated', handleAdminUpdate);
+      unsubscribe();
     };
   }, []);
 
@@ -34,14 +50,20 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
   return (
     <header className="bg-gradient-to-r from-green-900 via-green-800 to-blue-950 text-white shadow-xl sticky top-0 z-40 no-print">
       {/* Top Banner Ticker */}
-      <div className="bg-yellow-400 text-green-950 px-4 py-1 text-xs md:text-sm font-bold flex justify-between items-center shadow-inner">
-        <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
-          <span className="bg-green-900 text-yellow-300 px-2 py-0.5 rounded text-[11px] animate-pulse">জরুরি ঘোষণা</span>
-          <span className="animate-marquee">সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউটের ২০২৫-২০২৬ শিক্ষাবর্ষের প্রথম সেমিস্টারের নবীন বরণ ২০২৬ - ১২ নভেম্বর ২০২৬, বৃহস্পতিবার!</span>
+      <div className="bg-yellow-400 text-green-950 px-3 py-1.5 text-xs md:text-sm font-bold flex items-center justify-between shadow-inner overflow-hidden border-b border-yellow-500/40">
+        <div className="flex items-center gap-2 shrink-0 z-10 bg-yellow-400 pr-3 shadow-[4px_0_8px_-2px_rgba(250,204,21,0.9)]">
+          <span className="bg-green-900 text-yellow-300 px-2 py-0.5 rounded text-[11px] font-black uppercase tracking-wider animate-pulse whitespace-nowrap shadow-sm">
+            জরুরি ঘোষণা
+          </span>
         </div>
-        <div className="hidden md:flex items-center gap-4 text-xs">
-          <span>📅 ১২ নভেম্বর ২০২৬</span>
-          <span>📍 সাতক্ষীরা শহর</span>
+        <div className="flex-1 overflow-hidden relative mx-2">
+          <div className="animate-marquee inline-block font-semibold text-green-950 tracking-wide">
+            📢 সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউটের ২০২৫-২০২৬ শিক্ষাবর্ষের প্রথম সেমিস্টারের নবীন শিক্ষার্থীদের নবীন বরণ ২০২৬ — তারিখ: ১২ নভেম্বর ২০২৬, রোজ বৃহস্পতিবার — অনুষ্ঠানস্থল: সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট, সাতক্ষীরা শহর — সাথে থাকছে একগুচ্ছ আকর্ষণীয় উপহার ও সংবর্ধনা! রেজিস্ট্রেশন সম্পূর্ণ ফ্রি!
+          </div>
+        </div>
+        <div className="hidden lg:flex items-center gap-3 text-xs shrink-0 z-10 bg-yellow-400 pl-3 shadow-[-4px_0_8px_-2px_rgba(250,204,21,0.9)] whitespace-nowrap">
+          <span className="bg-green-800/10 px-2 py-0.5 rounded font-bold">📅 ১২ নভেম্বর ২০২৬</span>
+          <span className="bg-green-800/10 px-2 py-0.5 rounded font-bold">📍 সাতক্ষীরা শহর</span>
         </div>
       </div>
 
