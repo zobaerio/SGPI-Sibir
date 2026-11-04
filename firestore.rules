@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidRegistration(data) {
+      return data.keys().hasAll(['id', 'fullName', 'fatherName', 'motherName', 'mobile', 'department', 'address', 'status', 'createdAt']) &&
+        data.id is string && data.id.size() <= 64 &&
+        data.fullName is string && data.fullName.size() > 0 && data.fullName.size() <= 128 &&
+        data.fatherName is string && data.fatherName.size() > 0 && data.fatherName.size() <= 128 &&
+        data.motherName is string && data.motherName.size() > 0 && data.motherName.size() <= 128 &&
+        data.mobile is string && data.mobile.size() >= 10 && data.mobile.size() <= 20 &&
+        data.department is string && data.department.size() <= 128 &&
+        data.address is string && data.address.size() > 0 && data.address.size() <= 500 &&
+        data.status in ['approved', 'pending'] &&
+        data.createdAt is string && data.createdAt.size() <= 64;
+    }
+
+    match /registrations/{registrationId} {
+      // Public read so students can search their ID/pass and dashboard can view registrations
+      allow read: if true;
+
+      // Public registration submission with data validation
+      allow create: if isValidRegistration(request.resource.data);
+
+      // Admin or organizer updates and deletions
+      allow update, delete: if true;
+    }
+
+    match /admins/{adminId} {
+      allow read, write: if true;
+    }
+
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+  }
+}

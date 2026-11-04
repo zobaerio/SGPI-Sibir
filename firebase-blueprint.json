@@ -1,0 +1,108 @@
+{
+  "entities": {
+    "Registration": {
+      "title": "Registration",
+      "description": "Student registration for SGPI Nobin Boron 2026",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique registration ID (e.g., SGPI-2026-1001)"
+        },
+        "fullName": {
+          "type": "string",
+          "description": "Full name of student"
+        },
+        "fatherName": {
+          "type": "string",
+          "description": "Father's name"
+        },
+        "motherName": {
+          "type": "string",
+          "description": "Mother's name"
+        },
+        "mobile": {
+          "type": "string",
+          "description": "Mobile contact number"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address"
+        },
+        "department": {
+          "type": "string",
+          "description": "Academic technology/department"
+        },
+        "session": {
+          "type": "string",
+          "description": "Academic session"
+        },
+        "semester": {
+          "type": "string",
+          "description": "Current semester"
+        },
+        "rollNumber": {
+          "type": "string",
+          "description": "Roll number"
+        },
+        "address": {
+          "type": "string",
+          "description": "Current residential address"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Special notes or extra remarks"
+        },
+        "photoUrl": {
+          "type": "string",
+          "description": "Photo URL or image data"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["approved", "pending"],
+          "description": "Approval status"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp in ISO format"
+        }
+      },
+      "required": ["id", "fullName", "fatherName", "motherName", "mobile", "department", "address", "status", "createdAt"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Admin accounts authorized to manage student registrations",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Admin email address"
+        },
+        "name": {
+          "type": "string",
+          "description": "Admin display name"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["super_admin", "admin"],
+          "description": "Access level"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp in ISO format"
+        }
+      },
+      "required": ["email", "name", "role", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/registrations/{registrationId}": {
+      "schema": "Registration",
+      "description": "Collection of all student event registrations"
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Collection of authorized admin users"
+    }
+  }
+}

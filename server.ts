@@ -105,6 +105,10 @@ function broadcastEvent(type: string, payload: any) {
 
 // --- REST Endpoints ---
 
+app.get('/api/health', (req, res) => {
+  res.send('Server is up and running on port ' + PORT);
+});
+
 // 1. Get all registrations (For Admin or public stats)
 app.get('/api/registrations', (req, res) => {
   const registrations = readRegistrations();
