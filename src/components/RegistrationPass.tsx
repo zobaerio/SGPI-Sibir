@@ -1,7 +1,10 @@
 import React from 'react';
 import { StudentRegistration } from '../types';
 import { QRCodeSVG } from 'qrcode.react';
-import { Award, Calendar, MapPin, Phone, User, CheckCircle, Printer, Download } from 'lucide-react';
+import {
+  Award, CalendarDays, MapPin, Phone, UserRound, Printer,
+  X, ShieldCheck, GraduationCap, Sparkles, Hash
+} from 'lucide-react';
 
 interface RegistrationPassProps {
   registration: StudentRegistration;
@@ -9,142 +12,145 @@ interface RegistrationPassProps {
   onPrint?: () => void;
 }
 
-export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration, onClose }) => {
+const departmentLabels: Record<string, string> = {
+  'Civil Technology': 'সিভিল টেকনোলজি',
+  'Electrical Technology': 'ইলেকট্রিক্যাল টেকনোলজি',
+  'Mechanical Technology': 'মেকানিক্যাল টেকনোলজি',
+  'Computer Science & Technology': 'কম্পিউটার সায়েন্স অ্যান্ড টেকনোলজি',
+  'Electronics Technology': 'ইলেকট্রনিক্স টেকনোলজি',
+  'অন্যান্য': 'অন্যান্য',
+};
+
+export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration, onClose, onPrint }) => {
   const handlePrint = () => {
+    onPrint?.();
     window.print();
   };
 
+  const approved = registration.status === 'approved';
+
   return (
-    <div className="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-2xl mx-auto border-4 border-green-600 my-4 print:my-0 print:shadow-none print:border-2">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-green-800 via-green-700 to-blue-900 text-white p-6 text-center relative">
-        <div className="absolute top-2 left-2 bg-yellow-400 text-green-950 text-xs font-bold px-2 py-1 rounded">
-          অফিসিয়াল পাস
-        </div>
-        <div className="text-xs uppercase tracking-widest text-green-200 font-semibold mb-1">
-          সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট
-        </div>
-        <h2 className="text-2xl md:text-3xl font-extrabold text-yellow-300 drop-shadow">
-          নবীন বরণ ২০২৬
-        </h2>
-        <p className="text-sm text-green-100 mt-1">
-          শিক্ষাবর্ষ: ২০২৫-২০২৬ | প্রথম সেমিস্টার
-        </p>
-        <div className="mt-2 inline-block bg-white/10 backdrop-blur px-3 py-1 rounded-full text-xs text-yellow-200 font-medium">
-          সংগঠক: বাংলাদেশ ইসলামী ছাত্রশিবির, সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট শাখা
-        </div>
-      </div>
+    <section className="mx-auto my-5 w-full max-w-5xl px-2 sm:px-4 print:my-0 print:max-w-none print:px-0">
+      <article className="event-pass relative isolate overflow-hidden rounded-[28px] border border-emerald-200 bg-white shadow-[0_24px_70px_rgba(6,78,59,0.16)] print:rounded-xl print:border-2 print:border-emerald-800 print:shadow-none">
+        <div className="pointer-events-none absolute -right-20 -top-24 -z-10 h-72 w-72 rounded-full border-[30px] border-emerald-50 print:border-emerald-100" />
+        <div className="pointer-events-none absolute -bottom-28 -left-20 -z-10 h-72 w-72 rounded-full border-[30px] border-lime-50 print:border-emerald-100" />
 
-      {/* Body content */}
-      <div className="p-6 md:p-8 bg-gradient-to-b from-green-50/50 to-white">
-        <div className="flex flex-col md:flex-row gap-6 items-center border-b border-green-200 pb-6 mb-6">
-          {/* Student Photo */}
-          <div className="w-32 h-36 bg-gray-100 rounded-xl border-2 border-green-500 overflow-hidden shadow-inner flex items-center justify-center shrink-0">
-            {registration.photoUrl ? (
-              <img 
-                src={registration.photoUrl} 
-                alt={registration.fullName} 
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="text-center p-2 text-gray-400">
-                <User className="w-12 h-12 mx-auto mb-1 text-green-600" />
-                <span className="text-[10px]">ছবি নেই</span>
+        <header className="relative overflow-hidden bg-gradient-to-r from-emerald-950 via-emerald-800 to-teal-800 px-5 py-6 text-white sm:px-8 sm:py-7">
+          <div className="absolute -right-8 -top-16 h-56 w-56 rounded-full border border-white/10" />
+          <div className="absolute -right-1 top-2 h-40 w-40 rounded-full border border-white/10" />
+          <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-yellow-200/50 bg-yellow-300 text-emerald-950 shadow-lg">
+                <GraduationCap className="h-8 w-8" />
               </div>
-            )}
+              <div>
+                <p className="text-xs font-bold tracking-wide text-emerald-100 sm:text-sm">সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট</p>
+                <h2 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">নবীন বরণ ২০২৬</h2>
+                <p className="mt-1 text-xs font-medium text-emerald-100 sm:text-sm">২০২৫-২০২৬ শিক্ষাবর্ষ • প্রথম সেমিস্টার</p>
+              </div>
+            </div>
+            <div className="self-start rounded-full border border-yellow-200/50 bg-yellow-300 px-4 py-2 text-xs font-black text-emerald-950 shadow sm:self-center">
+              STUDENT ENTRY PASS
+            </div>
           </div>
+          <div className="relative mt-5 flex flex-wrap items-center gap-2 text-xs font-semibold text-emerald-50">
+            <span className="rounded-full bg-white/10 px-3 py-1.5">বাংলাদেশ ইসলামী ছাত্রশিবির</span>
+            <span className="rounded-full bg-white/10 px-3 py-1.5">সাতক্ষীরা শহর</span>
+          </div>
+        </header>
 
-          {/* Core Info */}
-          <div className="flex-1 text-center md:text-left">
-            <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
-              <span className="bg-green-700 text-white text-xs px-3 py-0.5 rounded-full font-bold">
-                রেজিস্ট্রেশন আইডি: {registration.id}
+        <div className="grid gap-6 p-5 sm:grid-cols-[minmax(0,1fr)_190px] sm:gap-7 sm:p-8">
+          <div className="min-w-0">
+            <div className="mb-5 flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-extrabold text-emerald-900 ring-1 ring-emerald-200">
+                <Hash className="h-3.5 w-3.5" /> {registration.id}
               </span>
-              <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
-                registration.status === 'approved' 
-                  ? 'bg-emerald-100 text-emerald-800' 
-                  : 'bg-amber-100 text-amber-800'
-              }`}>
-                {registration.status === 'approved' ? 'অনুমোদিত' : 'বিচারাধীন'}
+              <span className={`rounded-lg px-3 py-1.5 text-xs font-extrabold ring-1 ${approved ? 'bg-emerald-50 text-emerald-800 ring-emerald-200' : 'bg-amber-50 text-amber-800 ring-amber-200'}`}>
+                {approved ? 'অনুমোদিত' : 'রেজিস্ট্রেশন সম্পন্ন'}
               </span>
             </div>
-            
-            <h3 className="text-2xl font-bold text-gray-900 mb-1">
-              {registration.fullName}
-            </h3>
-            <p className="text-sm font-semibold text-green-800 mb-2">
-              বিভাগ: {registration.department}
-            </p>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-700">
-              <div><strong className="text-gray-900">পিতা:</strong> {registration.fatherName}</div>
-              <div><strong className="text-gray-900">মাতা:</strong> {registration.motherName}</div>
-              <div><strong className="text-gray-900">মোবাইল:</strong> {registration.mobile}</div>
-              <div><strong className="text-gray-900">রোল নম্বর:</strong> {registration.rollNumber || 'প্রযোজ্য নয়'}</div>
+
+            <div className="flex flex-col gap-5 sm:flex-row">
+              <div className="relative h-36 w-32 shrink-0 self-center overflow-hidden rounded-2xl border-2 border-white bg-slate-100 shadow-[0_5px_20px_rgba(15,23,42,0.14)] ring-1 ring-emerald-200 sm:self-start">
+                {registration.photoUrl ? (
+                  <img src={registration.photoUrl} alt={registration.fullName} className="h-full w-full object-cover" />
+                ) : (
+                  <div className="flex h-full flex-col items-center justify-center text-emerald-700">
+                    <UserRound className="h-12 w-12" />
+                    <span className="mt-2 text-[10px] font-bold">শিক্ষার্থীর ছবি</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="min-w-0 flex-1 text-center sm:text-left">
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Registered Student</p>
+                <h3 className="mt-1 break-words text-2xl font-black leading-tight text-slate-900 sm:text-3xl">{registration.fullName}</h3>
+                <p className="mt-2 inline-flex max-w-full items-center rounded-full bg-teal-50 px-3 py-1 text-xs font-bold text-teal-900 ring-1 ring-teal-100">
+                  <GraduationCap className="mr-1.5 h-4 w-4 shrink-0" />
+                  {departmentLabels[registration.department] || registration.department}
+                </p>
+
+                <div className="mt-4 grid grid-cols-1 gap-x-5 gap-y-3 text-left sm:grid-cols-2">
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-bold text-slate-400">পিতার নাম</p>
+                    <p className="break-words text-sm font-bold text-slate-800">{registration.fatherName}</p>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-bold text-slate-400">মাতার নাম</p>
+                    <p className="break-words text-sm font-bold text-slate-800">{registration.motherName}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-400">মোবাইল নম্বর</p>
+                    <p className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-800"><Phone className="h-3.5 w-3.5 text-emerald-700" />{registration.mobile}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-400">রোল নম্বর</p>
+                    <p className="text-sm font-bold text-slate-800">{registration.rollNumber || 'উল্লেখ করা হয়নি'}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* QR Code */}
-          <div className="bg-white p-3 rounded-xl border border-green-200 shadow-sm flex flex-col items-center shrink-0">
-            <QRCodeSVG 
-              value={`SGPI-2026-REG:${registration.id}`} 
-              size={90}
-              level="M"
-              includeMargin={false}
-            />
-            <span className="text-[10px] text-gray-500 mt-1 font-mono">{registration.id}</span>
-          </div>
+          <aside className="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center">
+            <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+              <QRCodeSVG value={`SGPI-2026-REG:${registration.id}`} size={126} level="H" includeMargin />
+            </div>
+            <p className="mt-3 text-xs font-black text-slate-900">QR PASS CODE</p>
+            <p className="mt-1 break-all font-mono text-[10px] text-slate-500">{registration.id}</p>
+            <p className="mt-2 text-[10px] leading-relaxed text-slate-500">প্রবেশের সময় QR কোডটি প্রদর্শন করুন</p>
+          </aside>
         </div>
 
-        {/* Event Details Footer inside Pass */}
-        <div className="bg-green-800 text-white rounded-xl p-4 mb-6 text-xs grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-yellow-300 shrink-0" />
-            <div>
-              <div className="text-green-200">তারিখ ও বার</div>
-              <div className="font-bold">১২ নভেম্বর ২০২৬ (বৃহস্পতিবার)</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-yellow-300 shrink-0" />
-            <div>
-              <div className="text-green-200">ভেন্যু</div>
-              <div className="font-bold">সাতক্ষীরা শহর</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Award className="w-4 h-4 text-yellow-300 shrink-0" />
-            <div>
-              <div className="text-green-200">বিশেষ আকর্ষণ</div>
-              <div className="font-bold text-yellow-300">থাকছে একগুচ্ছ উপহার।</div>
-            </div>
-          </div>
-        </div>
+        <div className="mx-5 border-t border-dashed border-slate-300 sm:mx-8" />
 
-        {/* Instructions */}
-        <div className="text-center text-xs text-gray-600 mb-6 border-t border-dashed border-gray-300 pt-4">
-          <p className="font-semibold text-green-900 mb-1">অনুষ্ঠানে প্রবেশের সময় এই পাসটি (ডিজিটাল কপি বা প্রিন্ট) সাথে রাখুন।</p>
-          <p>রেজিস্ট্রেশনের তারিখ: {new Date(registration.createdAt).toLocaleDateString('bn-BD')}</p>
-        </div>
+        <footer className="grid gap-3 bg-emerald-50/80 px-5 py-5 sm:grid-cols-3 sm:px-8">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-800 shadow-sm"><CalendarDays className="h-5 w-5" /></span>
+            <div><p className="text-[10px] font-bold text-slate-500">অনুষ্ঠানের তারিখ</p><p className="text-xs font-extrabold text-slate-900">১২ নভেম্বর ২০২৬</p><p className="text-[10px] text-slate-600">বৃহস্পতিবার</p></div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-800 shadow-sm"><MapPin className="h-5 w-5" /></span>
+            <div><p className="text-[10px] font-bold text-slate-500">অনুষ্ঠানের স্থান</p><p className="text-xs font-extrabold text-slate-900">সাতক্ষীরা শহর</p><p className="text-[10px] text-slate-600">সাতক্ষীরা সরকারি পলিটেকনিক</p></div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-800 shadow-sm"><Sparkles className="h-5 w-5" /></span>
+            <div><p className="text-[10px] font-bold text-slate-500">বিশেষ আকর্ষণ</p><p className="text-xs font-extrabold text-emerald-900">থাকছে একগুচ্ছ উপহার।</p><p className="text-[10px] text-slate-600">রেজিস্ট্রেশন সম্পূর্ণ ফ্রি</p></div>
+          </div>
+        </footer>
 
-        {/* Action Buttons */}
-        <div className="flex flex-wrap gap-3 justify-center no-print">
-          <button
-            onClick={handlePrint}
-            className="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-medium px-6 py-2.5 rounded-xl transition shadow-md"
-          >
-            <Printer className="w-4 h-4" /> প্রিন্ট / ডাউনলোড করুন
-          </button>
-          {onClose && (
-            <button
-              onClick={onClose}
-              className="flex items-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-6 py-2.5 rounded-xl transition"
-            >
-              বন্ধ করুন
-            </button>
-          )}
+        <div className="flex flex-col gap-2 border-t border-emerald-100 px-5 py-4 text-center sm:flex-row sm:items-center sm:justify-between sm:px-8">
+          <p className="text-[10px] leading-relaxed text-slate-500">রেজিস্ট্রেশনের তারিখ: {new Date(registration.createdAt).toLocaleDateString('bn-BD')} • প্রবেশের সময় এই পাসটি সঙ্গে রাখুন।</p>
+          <p className="inline-flex items-center justify-center gap-1 text-[10px] font-bold text-emerald-800"><ShieldCheck className="h-3.5 w-3.5" /> ব্যক্তিগত পাস • অন্যকে শেয়ার করবেন না</p>
         </div>
+      </article>
+
+      <div className="no-print mt-5 flex flex-wrap justify-center gap-3">
+        <button onClick={handlePrint} className="inline-flex items-center gap-2 rounded-xl bg-emerald-800 px-6 py-3 text-sm font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-900">
+          <Printer className="h-4 w-4" /> প্রিন্ট / PDF ডাউনলোড
+        </button>
+        {onClose && <button onClick={onClose} className="inline-flex items-center gap-2 rounded-xl bg-slate-100 px-6 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-200"><X className="h-4 w-4" /> বন্ধ করুন</button>}
       </div>
-    </div>
+    </section>
   );
 };
