@@ -1,4 +1,3 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { supabaseRequest, toStudent } from './_lib/supabase';
 
 const departments = ['Civil Technology','Electrical Technology','Mechanical Technology','Computer Science & Technology','Electronics Technology','অন্যান্য'];
@@ -6,6 +5,8 @@ function normalizeMobile(value: string) {
   const digits = String(value || '').replace(/\D/g, '');
   return digits.startsWith('880') ? '0' + digits.slice(3) : digits;
 }
+type VercelRequest = { method?: string; headers: Record<string, string | string[] | undefined>; body?: any; query: Record<string, string | string[] | undefined> };
+type VercelResponse = { setHeader(name: string, value: string): void; status(code: number): VercelResponse; json(data: unknown): void };
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Cache-Control', 'no-store, max-age=0');
   if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });
