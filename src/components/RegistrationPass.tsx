@@ -28,7 +28,7 @@ export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration
           নবীন বরণ ২০২৬
         </h2>
         <p className="text-sm text-green-100 mt-1">
-          সেশন: ২৬-২৭ | প্রথম সেমিস্টার
+          শিক্ষাবর্ষ: ২০২৫-২০২৬ | প্রথম সেমিস্টার
         </p>
         <div className="mt-2 inline-block bg-white/10 backdrop-blur px-3 py-1 rounded-full text-xs text-yellow-200 font-medium">
           সংগঠক: বাংলাদেশ ইসলামী ছাত্রশিবির, সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট শাখা
@@ -109,14 +109,14 @@ export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration
             <MapPin className="w-4 h-4 text-yellow-300 shrink-0" />
             <div>
               <div className="text-green-200">ভেন্যু</div>
-              <div className="font-bold">পলিটেকনিক ক্যাম্পাস</div>
+              <div className="font-bold">সাতক্ষীরা শহর</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Award className="w-4 h-4 text-yellow-300 shrink-0" />
             <div>
               <div className="text-green-200">বিশেষ আকর্ষণ</div>
-              <div className="font-bold text-yellow-300">সাথে থাকছে একগুচ্ছ উপহার</div>
+              <div className="font-bold text-yellow-300">থাকছে একগুচ্ছ উপহার।</div>
             </div>
           </div>
         </div>
