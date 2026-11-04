@@ -27,9 +27,9 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ ok: false });
   const secret = process.env.ADMIN_SESSION_SECRET;
   const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-  if (!secret || !adminEmail) return res.status(503).json({ ok: false, message: 'Admin security setup is incomplete.' });
+  if (!secret || !adminEmail || !process.env.ADMIN_PASSWORD_HASH) return res.status(503).json({ ok: false, message: 'Admin security setup is incomplete.' });
 
-  const token = (req.headers.cookie || '').split(';').map(x => x.trim()).find(x => x.startsWith(COOKIE + '='))?.slice(COOKIE.length + 1) || '';
+  const token = String(req.headers.cookie || '').split(';').map(x => x.trim()).find(x => x.startsWith(COOKIE + '='))?.slice(COOKIE.length + 1) || '';
   const session = token ? verify(token, secret) : null;
 
   if (req.method === 'GET' || req.body?.action === 'session') {
