@@ -14,7 +14,7 @@ export const EventPosterSection: React.FC<EventPosterSectionProps> = ({ onGotoRe
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           <div>
             <div className="inline-flex items-center gap-2 bg-yellow-400 text-green-950 px-4 py-1.5 rounded-full text-sm font-extrabold mb-4 shadow">
-              <Award className="w-4 h-4" /> ২৬-২৭ শিক্ষাবর্ষের নবীন বরণ
+              <Award className="w-4 h-4" /> ২০২৫-২০২৬ শিক্ষাবর্ষের নবীন বরণ
             </div>
             <h1 className="text-3xl md:text-5xl font-black text-yellow-300 leading-tight mb-4">
               নবীন বরণ ২০২৬
@@ -35,7 +35,7 @@ export const EventPosterSection: React.FC<EventPosterSectionProps> = ({ onGotoRe
                 <MapPin className="w-5 h-5 text-yellow-300 shrink-0 mt-0.5" />
                 <div>
                   <div className="text-green-200 text-xs">ভেন্যু</div>
-                  <div className="font-bold text-white">সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট</div>
+                  <div className="font-bold text-white">সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট, সাতক্ষীরা শহর</div>
                 </div>
               </div>
             </div>
@@ -59,7 +59,7 @@ export const EventPosterSection: React.FC<EventPosterSectionProps> = ({ onGotoRe
                 className="w-full h-auto rounded-lg object-contain max-h-[500px]"
               />
               <div className="mt-3 text-center text-xs font-bold text-green-900 bg-yellow-100 py-2 rounded-lg">
-                ✨ সাথে থাকছে একগুচ্ছ উপহার! ✨
+                ✨ থাকছে একগুচ্ছ উপহার। ✨
               </div>
             </div>
           </div>
