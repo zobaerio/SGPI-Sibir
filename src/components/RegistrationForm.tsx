@@ -131,8 +131,9 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
             নবীন বরণ ২০২৬ - রেজিস্ট্রেশন ফর্ম
           </h2>
           <p className="text-green-100 text-sm md:text-base max-w-2xl mx-auto">
-            সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট • ২০২৫-২০২৬ শিক্ষাবর্ষ • প্রথম সেমিস্টার\n          {/* Browser-only storage notice */}
+            সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট • ২০২৫-২০২৬ শিক্ষাবর্ষ • প্রথম সেমিস্টার
           </p>
+          <p className="mt-2 text-xs font-semibold text-emerald-100">রেজিস্ট্রেশনের তথ্য এই ব্রাউজারেই সংরক্ষিত থাকবে।</p>
         </div>
 
         {error && (
