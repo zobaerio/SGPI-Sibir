@@ -4,11 +4,25 @@ const STORAGE_KEYS = {
   CURRENT_ADMIN: 'sgpi_nobin_boron_2026_current_admin',
 };
 
+// --- Helpers ---
+async function fetchWithTimeout(url: string, options: any = {}, timeout = 10000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(id);
+    return response;
+  } catch (err) {
+    clearTimeout(id);
+    throw err;
+  }
+}
+
 // --- Real Server API Calls ---
 
 export async function fetchRegistrations(): Promise<StudentRegistration[]> {
   try {
-    const res = await fetch('/api/registrations');
+    const res = await fetchWithTimeout('/api/registrations');
     if (!res.ok) throw new Error('রেজিস্ট্রেশন তথ্য লোড করতে ব্যর্থ হয়েছে');
     return await res.json();
   } catch (err) {
@@ -18,7 +32,7 @@ export async function fetchRegistrations(): Promise<StudentRegistration[]> {
 }
 
 export async function submitRegistration(newReg: Omit<StudentRegistration, 'id' | 'createdAt' | 'status'>): Promise<StudentRegistration> {
-  const res = await fetch('/api/registrations', {
+  const res = await fetchWithTimeout('/api/registrations', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(newReg),
@@ -39,7 +53,7 @@ export async function submitRegistration(newReg: Omit<StudentRegistration, 'id' 
 }
 
 export async function searchRegistration(query: string): Promise<StudentRegistration> {
-  const res = await fetch(`/api/registrations/search?q=${encodeURIComponent(query)}`);
+  const res = await fetchWithTimeout(`/api/registrations/search?q=${encodeURIComponent(query)}`);
   
   let data: any;
   try {
@@ -55,7 +69,7 @@ export async function searchRegistration(query: string): Promise<StudentRegistra
 }
 
 export async function updateRegistrationStatusApi(id: string, status: StudentRegistration['status']): Promise<StudentRegistration> {
-  const res = await fetch(`/api/registrations/${id}/status`, {
+  const res = await fetchWithTimeout(`/api/registrations/${id}/status`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ status }),
@@ -67,7 +81,7 @@ export async function updateRegistrationStatusApi(id: string, status: StudentReg
 }
 
 export async function updateRegistrationApi(updatedReg: StudentRegistration): Promise<StudentRegistration> {
-  const res = await fetch(`/api/registrations/${updatedReg.id}`, {
+  const res = await fetchWithTimeout(`/api/registrations/${updatedReg.id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updatedReg),
@@ -79,7 +93,7 @@ export async function updateRegistrationApi(updatedReg: StudentRegistration): Pr
 }
 
 export async function deleteRegistrationApi(id: string): Promise<void> {
-  const res = await fetch(`/api/registrations/${id}`, {
+  const res = await fetchWithTimeout(`/api/registrations/${id}`, {
     method: 'DELETE',
   });
   if (!res.ok) {
@@ -89,7 +103,7 @@ export async function deleteRegistrationApi(id: string): Promise<void> {
 }
 
 export async function loginAdminApi(email: string, password: string): Promise<AdminUser> {
-  const res = await fetch('/api/admin-auth', {
+  const res = await fetchWithTimeout('/api/admin-auth', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'login', email, password }),
@@ -137,26 +151,39 @@ export const setCurrentAdmin = (admin: AdminUser | null) => {
   window.dispatchEvent(new Event('sgpi_admin_updated'));
 };
 
-// SSE Real-time Subscription Hook
+// Singleton for SSE connection to avoid hitting browser connection limits (max 6)
+let sharedEventSource: EventSource | null = null;
+const sseListeners = new Set<(type: string, payload: any) => void>();
+
 export function subscribeToRealtimeUpdates(onEvent: (type: string, payload: any) => void) {
-  const eventSource = new EventSource('/api/events');
+  sseListeners.add(onEvent);
 
-  eventSource.onmessage = (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      if (data.type !== 'connected') {
-        onEvent(data.type, data.payload);
+  if (!sharedEventSource) {
+    console.log('Initializing shared SSE connection...');
+    sharedEventSource = new EventSource('/api/events');
+
+    sharedEventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type !== 'connected') {
+          sseListeners.forEach(listener => listener(data.type, data.payload));
+        }
+      } catch (err) {
+        console.error('Error handling shared SSE message', err);
       }
-    } catch (err) {
-      console.error('Error handling SSE message', err);
-    }
-  };
+    };
 
-  eventSource.onerror = (err) => {
-    console.warn('Real-time connection reconnecting...', err);
-  };
+    sharedEventSource.onerror = (err) => {
+      console.warn('Shared real-time connection reconnecting...', err);
+      // EventSource automatically reconnects
+    };
+  }
 
   return () => {
-    eventSource.close();
+    sseListeners.delete(onEvent);
+    if (sseListeners.size === 0 && sharedEventSource) {
+      sharedEventSource.close();
+      sharedEventSource = null;
+    }
   };
 }

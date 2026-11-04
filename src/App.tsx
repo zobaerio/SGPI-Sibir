@@ -24,10 +24,15 @@ export default function App() {
           if (result.ok && result.admin) {
             setCurrentAdmin({ ...result.admin, createdAt: new Date().toISOString() });
             if (window.location.pathname === '/admin') setActiveTab('admin');
-          } else setCurrentAdmin(null);
-        } else setCurrentAdmin(null);
-      } catch { setCurrentAdmin(null); }
-      finally {
+          } else {
+            setCurrentAdmin(null);
+          }
+        } else {
+          setCurrentAdmin(null);
+        }
+      } catch {
+        setCurrentAdmin(null);
+      } finally {
         setCheckingSession(false);
         if (window.location.pathname === '/admin' && !getCurrentAdmin()) setShowAdminLogin(true);
       }

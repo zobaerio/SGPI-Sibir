@@ -75,12 +75,20 @@ app.get('/api/events', (req, res) => {
   res.flushHeaders();
 
   clients.push(res);
+  console.log(`SSE Client connected. Total: ${clients.length}`);
 
   // Send initial ping
   res.write(`data: ${JSON.stringify({ type: 'connected' })}\n\n`);
 
+  // Heartbeat to keep connection alive
+  const heartbeat = setInterval(() => {
+    res.write(': heartbeat\n\n');
+  }, 30000);
+
   req.on('close', () => {
+    clearInterval(heartbeat);
     clients = clients.filter(c => c !== res);
+    console.log(`SSE Client disconnected. Total: ${clients.length}`);
   });
 });
 
@@ -242,9 +250,9 @@ app.all('/api/admin-auth', (req, res) => {
   const method = req.method;
 
   if (method === 'GET' || action === 'session') {
-    // For now, we trust the local getCurrentAdmin() but we can implement a cookie-based session later if needed.
-    // To fix the frontend checkSession() in App.tsx:
-    return res.json({ ok: true, admin: { email: 'zobaerhasan431@gmail.com', name: 'জুবায়ের হাসান (সুপার এডমিন)', role: 'super_admin' } });
+    // In a real app, we'd check a session cookie here. 
+    // For now, we return 401 to force a fresh login if there's no state.
+    return res.status(401).json({ ok: false, error: 'সেশন শেষ হয়েছে।' });
   }
 
   if (method === 'POST' && (action === 'login' || !action)) {

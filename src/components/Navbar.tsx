@@ -14,31 +14,17 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
   const [totalRegs, setTotalRegs] = useState<number>(0);
 
   const loadCount = async () => {
-    try {
-      const data = await fetchRegistrations();
-      setTotalRegs(data.length);
-    } catch (e) {
-      // ignore
-    }
+    // Count is no longer displayed in the header to save browser connection slots
   };
 
   useEffect(() => {
-    loadCount();
     const handleAdminUpdate = () => {
       setAdminState(getCurrentAdmin());
     };
     window.addEventListener('sgpi_admin_updated', handleAdminUpdate);
 
-    // Subscribe to SSE updates for real-time header count
-    const unsubscribe = subscribeToRealtimeUpdates((type) => {
-      if (type === 'NEW_REGISTRATION' || type === 'DELETE_REGISTRATION') {
-        loadCount();
-      }
-    });
-
     return () => {
       window.removeEventListener('sgpi_admin_updated', handleAdminUpdate);
-      unsubscribe();
     };
   }, []);
 
