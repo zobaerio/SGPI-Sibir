@@ -1,4 +1,5 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+type VercelRequest = { method?: string; headers: Record<string, string | string[] | undefined>; body?: any };
+type VercelResponse = { setHeader(name: string, value: string): void; status(code: number): VercelResponse; json(data: unknown): void };
 import { createHmac, scryptSync, timingSafeEqual } from 'node:crypto';
 
 const COOKIE = 'sgpi_admin_session';
