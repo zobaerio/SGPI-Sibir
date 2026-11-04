@@ -83,7 +83,7 @@ export const AdminDashboard: React.FC = () => {
     others: registrations.filter(r => r.department === 'অন্যান্য').length,
   };
 
-  // Export to Excel / CSV
+  // Export to Excel (.xlsx)
   const exportToExcel = () => {
     const exportData = registrations.map((r, index) => ({
       'ক্রমিক': index + 1,
@@ -107,6 +107,38 @@ export const AdminDashboard: React.FC = () => {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Registrations');
     XLSX.writeFile(workbook, `Nobin_Boron_2026_Registrations_${Date.now()}.xlsx`);
+  };
+
+  // Export to CSV (.csv)
+  const exportToCSV = () => {
+    const exportData = registrations.map((r, index) => ({
+      'SL': index + 1,
+      'ID': r.id,
+      'Full Name': r.fullName,
+      'Father Name': r.fatherName,
+      'Mother Name': r.motherName,
+      'Mobile': r.mobile,
+      'Email': r.email || '',
+      'Department': r.department,
+      'Session': r.session,
+      'Semester': r.semester,
+      'Roll': r.rollNumber || '',
+      'Address': r.address,
+      'Notes': r.notes || '',
+      'Status': r.status,
+      'Date': new Date(r.createdAt).toLocaleString(),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
+    const blob = new Blob(['\ufeff' + csvOutput], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Nobin_Boron_2026_Students_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleDelete = async (id: string) => {
@@ -162,9 +194,15 @@ export const AdminDashboard: React.FC = () => {
         <div className="flex flex-wrap gap-3">
           <button
             onClick={exportToExcel}
-            className="bg-yellow-400 hover:bg-yellow-500 text-green-950 font-bold px-5 py-3 rounded-2xl shadow-lg transition flex items-center gap-2 text-sm"
+            className="bg-yellow-400 hover:bg-yellow-500 text-green-950 font-bold px-4 py-3 rounded-2xl shadow-lg transition flex items-center gap-2 text-sm"
           >
-            <FileSpreadsheet className="w-4 h-4" /> এক্সেল এক্সপোর্ট (Excel)
+            <FileSpreadsheet className="w-4 h-4" /> এক্সেল এক্সপোর্ট
+          </button>
+          <button
+            onClick={exportToCSV}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-3 rounded-2xl shadow-lg transition flex items-center gap-2 text-sm"
+          >
+            <Download className="w-4 h-4" /> সিএসভি এক্সপোর্ট (CSV)
           </button>
           <button
             onClick={loadData}
