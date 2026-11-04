@@ -31,11 +31,12 @@ export const AdminDashboard: React.FC = () => {
   useEffect(() => {
     loadData();
     const handleUpdate = () => loadData();
+    const handleAdminUpdate = () => setCurrentAdminState(getCurrentAdmin());
     window.addEventListener('sgpi_registrations_updated', handleUpdate);
-    window.addEventListener('sgpi_admin_updated', () => setCurrentAdminState(getCurrentAdmin()));
+    window.addEventListener('sgpi_admin_updated', handleAdminUpdate);
     return () => {
       window.removeEventListener('sgpi_registrations_updated', handleUpdate);
-      window.removeEventListener('sgpi_admin_updated', () => {});
+      window.removeEventListener('sgpi_admin_updated', handleAdminUpdate);
     };
   }, []);
 
@@ -145,6 +146,11 @@ export const AdminDashboard: React.FC = () => {
             <RefreshCw className="w-4 h-4" /> রিফ্রেশ
           </button>
         </div>
+      </div>
+
+      <div role="status" className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-950">
+        <div className="font-extrabold">গুরুত্বপূর্ণ: Browser-only Data Storage</div>
+        <p className="mt-1 leading-relaxed">এই সংস্করণে রেজিস্ট্রেশন তথ্য এই ডিভাইসের এই ব্রাউজারের Local Storage-এ থাকে। তাই অন্য শিক্ষার্থীর ফোনে করা রেজিস্ট্রেশন এখানে স্বয়ংক্রিয়ভাবে দেখা যাবে না। ব্রাউজারের ডেটা মুছে ফেললে রেজিস্ট্রেশনও হারাতে পারে। কেন্দ্রীয় ডেটাবেস ছাড়া সব শিক্ষার্থীর তথ্য এক জায়গায় সংগ্রহ করা সম্ভব নয়।</p>
       </div>
 
       {/* Statistics Cards */}
