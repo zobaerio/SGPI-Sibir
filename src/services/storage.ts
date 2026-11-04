@@ -24,9 +24,17 @@ export async function submitRegistration(newReg: Omit<StudentRegistration, 'id' 
     body: JSON.stringify(newReg),
   });
 
-  const data = await res.json();
+  const contentType = res.headers.get('content-type') || '';
+  let data: any = {};
+  if (contentType.includes('application/json')) {
+    data = await res.json().catch(() => ({}));
+  } else {
+    const text = await res.text();
+    data = { error: text || 'সার্ভার থেকে সঠিক রেসপন্স পাওয়া যায়নি।' };
+  }
+
   if (!res.ok) {
-    throw new Error(data.error || 'রেজিস্ট্রেশন সম্পন্ন করতে সমস্যা হয়েছে।');
+    throw new Error(data.error || data.message || 'রেজিস্ট্রেশন সম্পন্ন করতে সমস্যা হয়েছে।');
   }
 
   return data;
@@ -34,9 +42,17 @@ export async function submitRegistration(newReg: Omit<StudentRegistration, 'id' 
 
 export async function searchRegistration(query: string): Promise<StudentRegistration> {
   const res = await fetch(`/api/registrations/search?q=${encodeURIComponent(query)}`);
-  const data = await res.json();
+  const contentType = res.headers.get('content-type') || '';
+  let data: any = {};
+  if (contentType.includes('application/json')) {
+    data = await res.json().catch(() => ({}));
+  } else {
+    const text = await res.text();
+    data = { error: text || 'সার্ভার থেকে সঠিক রেসপন্স পাওয়া যায়নি।' };
+  }
+
   if (!res.ok) {
-    throw new Error(data.error || 'কোনো রেজিস্ট্রেশন পাওয়া যায়নি।');
+    throw new Error(data.error || data.message || 'কোনো রেজিস্ট্রেশন পাওয়া যায়নি।');
   }
   return data;
 }

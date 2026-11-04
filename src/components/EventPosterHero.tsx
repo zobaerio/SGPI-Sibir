@@ -3,9 +3,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { QrCode, ArrowDownToLine } from 'lucide-react';
 
 export const EventPosterHero: React.FC = () => {
-  const registrationUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/#register`
-    : '/#register';
+  const registrationUrl = 'https://sgpi-sibir.vercel.app/#register';
 
   return (
     <section className="bg-gradient-to-b from-lime-50 via-white to-green-50 px-3 py-4 sm:px-6 sm:py-8">
