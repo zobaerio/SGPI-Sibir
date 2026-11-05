@@ -83,7 +83,7 @@ export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration
               Computer-generated student registration identity card
             </p>
             <div className="rounded bg-white/95 p-0.5 shadow-sm sm:hidden">
-              <QRCodeSVG value={`SGPI-2026-REG:${registration.id}`} size={42} level="H" />
+              <QRCodeSVG value={`${window.location.origin}/?verify=${encodeURIComponent(registration.id)}`} size={42} level="H" />
             </div>
             <span className="text-[clamp(7px,1vw,10px)] font-extrabold tracking-wide text-blue-800">SGPI · 2026</span>
           </footer>
