@@ -69,7 +69,6 @@ export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration
                 <span className="text-emerald-800">Student ID</span><span className="truncate">{registration.id}</span>
                 <span className="text-emerald-800">Date</span><span>{registrationDate}</span>
                 <span className="text-emerald-800">Session</span><span>{registration.session || "২০২৬-২০২৭"}</span>
-                <span className="text-emerald-800">Session</span><span>{registration.session || "২০২৬-২০২৭"}</span>
                 <span className="text-emerald-800">Address</span><span className="line-clamp-2">{registration.address}</span>
               </div>
             </div>
