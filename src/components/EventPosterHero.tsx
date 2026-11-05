@@ -10,7 +10,7 @@ export const EventPosterHero: React.FC = () => {
       <div className="mx-auto max-w-5xl">
         <div className="overflow-hidden rounded-3xl border border-green-100 bg-white shadow-[0_24px_80px_rgba(22,101,52,0.16)]">
           <img
-            src="/event-poster.svg"
+            src="/assets/aistudio/file_0000000025f8820a970c45370e4b97c6_f2521c8e.png"
             alt="নবীন বরণ ২০২৬ — সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট"
             className="block h-auto w-full object-contain max-h-[85vh] mx-auto"
             fetchPriority="high"
