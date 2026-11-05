@@ -37,7 +37,7 @@ export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration
                 Sathkhira Govt. Polytechnic Institute
               </h1>
               <p className="mt-0.5 text-[clamp(7px,1vw,10px)] font-bold text-slate-600">
-                নবীন বরণ ২০২৬ · Student Identity Card
+                নবীন বরণ ২০২৬ · শিক্ষাবর্ষ ২০২৬-২০২৭
               </p>
             </div>
             <img
@@ -68,6 +68,7 @@ export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration
               <div className="mt-1.5 grid grid-cols-[auto,1fr] gap-x-2 gap-y-0.5 text-[clamp(8px,1.25vw,12px)] font-semibold leading-snug text-slate-800">
                 <span className="text-emerald-800">Student ID</span><span className="truncate">{registration.id}</span>
                 <span className="text-emerald-800">Date</span><span>{registrationDate}</span>
+                <span className="text-emerald-800">Session</span><span>{registration.session || "২০২৬-২০২৭"}</span>
                 <span className="text-emerald-800">Address</span><span className="line-clamp-2">{registration.address}</span>
               </div>
             </div>
