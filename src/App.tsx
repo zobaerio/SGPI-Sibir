@@ -7,6 +7,7 @@ import { CheckStatusModal } from './components/CheckStatusModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminLoginModal } from './components/AdminLoginModal';
 import { FooterAdminAccess } from './components/FooterAdminAccess';
+import { VerifyRegistration } from './components/VerifyRegistration';
 import { getCurrentAdmin, setCurrentAdmin } from './services/storage';
 import { Award, MapPin, Calendar, Loader2 } from 'lucide-react';
 
@@ -53,6 +54,10 @@ export default function App() {
     setActiveTab('register');
     window.history.replaceState({}, '', '/');
   };
+
+  const verificationId = new URLSearchParams(window.location.search).get('verify');
+
+  if (verificationId) return <VerifyRegistration registrationId={verificationId} />;
 
   if (checkingSession) return <div className="flex min-h-screen items-center justify-center bg-emerald-50"><Loader2 className="h-8 w-8 animate-spin text-emerald-800" /><span className="ml-3 text-sm font-semibold text-emerald-900">নিরাপদ সেশন যাচাই হচ্ছে…</span></div>;
 
