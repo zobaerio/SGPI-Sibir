@@ -14,7 +14,7 @@ export const EventPosterSection: React.FC<EventPosterSectionProps> = ({ onGotoRe
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           <div>
             <div className="inline-flex items-center gap-2 bg-yellow-400 text-green-950 px-4 py-1.5 rounded-full text-sm font-extrabold mb-4 shadow">
-              <Award className="w-4 h-4" /> ২০২৫-২০২৬ শিক্ষাবর্ষের নবীন বরণ
+              <Award className="w-4 h-4" /> ২০২৬-২০২৭ শিক্ষাবর্ষের নবীন বরণ
             </div>
             <h1 className="text-3xl md:text-5xl font-black text-yellow-300 leading-tight mb-4">
               নবীন বরণ ২০২৬
