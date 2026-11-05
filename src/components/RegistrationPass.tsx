@@ -74,7 +74,7 @@ export const RegistrationPass: React.FC<RegistrationPassProps> = ({ registration
             </div>
 
             <div className="hidden shrink-0 self-end rounded-md bg-white p-1 shadow-sm sm:block">
-              <QRCodeSVG value={`SGPI-2026-REG:${registration.id}`} size={76} level="H" includeMargin />
+              <QRCodeSVG value={`${window.location.origin}/?verify=${encodeURIComponent(registration.id)}`} size={76} level="H" includeMargin />
             </div>
           </div>
 
