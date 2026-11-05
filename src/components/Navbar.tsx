@@ -44,7 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenA
         </div>
         <div className="flex-1 overflow-hidden relative mx-2">
           <div className="animate-marquee inline-block font-semibold text-green-950 tracking-wide">
-            📢 সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউটের ২০২৫-২০২৬ শিক্ষাবর্ষের প্রথম সেমিস্টারের নবীন শিক্ষার্থীদের নবীন বরণ ২০২৬ — তারিখ: ১২ নভেম্বর ২০২৬, রোজ বৃহস্পতিবার — অনুষ্ঠানস্থল: সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট, সাতক্ষীরা শহর — সাথে থাকছে একগুচ্ছ আকর্ষণীয় উপহার ও সংবর্ধনা! রেজিস্ট্রেশন সম্পূর্ণ ফ্রি!
+            📢 সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউটের ২০২৬-২০২৭ শিক্ষাবর্ষের প্রথম সেমিস্টারের নবীন শিক্ষার্থীদের নবীন বরণ ২০২৬ — তারিখ: ১২ নভেম্বর ২০২৬, রোজ বৃহস্পতিবার — অনুষ্ঠানস্থল: সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট, সাতক্ষীরা শহর — সাথে থাকছে একগুচ্ছ আকর্ষণীয় উপহার ও সংবর্ধনা! রেজিস্ট্রেশন সম্পূর্ণ ফ্রি!
           </div>
         </div>
         <div className="hidden lg:flex items-center gap-3 text-xs shrink-0 z-10 bg-yellow-400 pl-3 shadow-[-4px_0_8px_-2px_rgba(250,204,21,0.9)] whitespace-nowrap">
