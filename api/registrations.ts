@@ -7,7 +7,7 @@ export default function handler(req: any, res: any) {
     const result = {
       ...body,
       id,
-      session: body.session || '২০২৫-২০২৬',
+      session: body.session || '২০২৬-২০২৭',
       semester: body.semester || 'প্রথম সেমিস্টার',
       status: body.status || 'approved',
       createdAt: body.createdAt || new Date().toISOString(),

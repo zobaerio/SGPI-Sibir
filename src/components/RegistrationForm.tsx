@@ -135,7 +135,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistrati
             সাতক্ষীরা সরকারি পলিটেকনিক ইনস্টিটিউট
           </h2>
           <p className="text-green-100 text-xs md:text-sm font-semibold mt-1">
-            ২৫-২৬ সেশনের প্রথম সেমিস্টারের নবীন শিক্ষার্থীদের নিয়ে — নবীন বরণ ২০২৬
+            ২০২৬-২০২৭ শিক্ষাবর্ষের প্রথম সেমিস্টারের নবীন শিক্ষার্থীদের নিয়ে — নবীন বরণ ২০২৬
           </p>
         </div>
 
